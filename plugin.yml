@@ -1,0 +1,14 @@
+name: RedLeafPermissions
+main: com.akaiha.redleaf.RedLeaf
+version: 0.1
+description: Created by Akaiha
+
+commands:
+  redleaf:
+    description: All Commands In RedLeafPermissions
+    aliases: [rl, rleaf]
+    
+permissions:
+  redleaf.*:
+    default: op
+    description: Parent permission for RedLeafPermissons
