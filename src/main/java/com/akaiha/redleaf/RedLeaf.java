@@ -1,18 +1,17 @@
 package com.akaiha.redleaf;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.akaiha.redleaf.config.Config;
+import com.akaiha.redleaf.database.DatabaseConfig;
 
 public class RedLeaf extends JavaPlugin {
-	
-	private Plugin plugin;
-	private Config config;
+
+	public static Config config;
 	
 	public void onEnable() {
-		this.plugin = this;
-		this.config = new Config(plugin);
+		config = new Config(this);
+		new DatabaseConfig();
 	}
 	
 	public void onDisable() {}

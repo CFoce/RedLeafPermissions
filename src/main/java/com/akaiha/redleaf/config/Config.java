@@ -15,21 +15,19 @@ import org.json.simple.parser.ParseException;
 
 public class Config {
 
-	private Plugin plugin;
 	private File configFile;
 	private EnumMap<Configs, Object> configEnum;
 	
 	public Config(Plugin plugin) {
-		this.plugin = plugin;
 		if (!plugin.getDataFolder().exists()) {
     		plugin.getDataFolder().mkdir();
     	}
 		this.configFile = new File(plugin.getDataFolder() + File.separator + "config.json");
-		createConfigFile();
+		loadConfigFile();
 	}
 	
 	@SuppressWarnings({ "unchecked", "resource" })
-	private void createConfigFile() {
+	private void loadConfigFile() {
 		JSONObject jObj = new JSONObject();
 		if (!configFile.exists()) {
 			try {
@@ -70,15 +68,23 @@ public class Config {
             } else {
             	configEnum.put(Configs.USER, jObj.get("user"));
             }
+            if (!jObj.containsKey("database")) {
+            	jObj.put("database", "REDLEAFPERMISSIONS");
+            	configEnum.put(Configs.DATABASE, "REDLEAFPERMISSIONS");
+            } else {
+            	configEnum.put(Configs.DATABASE, jObj.get("database"));
+            }
             
-        } catch (ParseException | IOException e) {
-        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Reading config.json");
-        }
+        } catch (ParseException | IOException e) {Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Reading config.json");}
 		
 		try {
 			FileWriter file = new FileWriter(configFile);
 	        file.write(jObj.toJSONString());
 	        file.flush();
 		} catch (IOException e) {Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Saving config.json");}
+	}
+	
+	public Object getConfig(Configs key) {
+		return configEnum.get(key);
 	}
 }
