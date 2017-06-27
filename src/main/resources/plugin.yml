@@ -1,9 +1,4 @@
 name: RedLeafPermissions
 main: com.akaiha.redleaf.RedLeaf
 version: 0.1
-description: Created by Akaiha
-
-commands:
-  RedLeafPermissions:
-    description: All Commands In RedLeafPermissions
-    aliases: [rlp, rleaf]
+author: Akaiha

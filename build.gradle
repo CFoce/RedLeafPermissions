@@ -3,15 +3,15 @@ apply plugin: 'java'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-def bukkitVersion = '1.8-R0.1-SNAPSHOT'
+def bungeeVersion = '1.12-SNAPSHOT'
 
 repositories {
     jcenter()
     maven {
-        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    	url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
 }
 
 dependencies {
-     compile (group: 'org.bukkit', name: 'bukkit', version: bukkitVersion)
+    compile (group: 'net.md-5', name: 'bungeecord-api', version: bungeeVersion)
 }

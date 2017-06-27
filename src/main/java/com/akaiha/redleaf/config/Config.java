@@ -4,21 +4,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.EnumMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import net.md_5.bungee.api.plugin.Plugin;
 
 public class Config {
 
+	private Plugin plugin;
 	private File configFile;
 	private EnumMap<Configs, Object> configEnum;
 	
 	public Config(Plugin plugin) {
+		this.plugin = plugin;
 		if (!plugin.getDataFolder().exists()) {
     		plugin.getDataFolder().mkdir();
     	}
@@ -26,62 +30,65 @@ public class Config {
 		loadConfigFile();
 	}
 	
-	@SuppressWarnings({ "unchecked", "resource" })
 	private void loadConfigFile() {
-		JSONObject jObj = new JSONObject();
-		if (!configFile.exists()) {
-			try {
-				FileWriter file = new FileWriter(configFile);
-		        file.write(jObj.toJSONString());
-		        file.flush();
-			} catch (IOException e) {Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Creating config.json");}
+		JsonObject jObj = new JsonObject();
+		Gson gson = new GsonBuilder().create();
+		try {
+			Writer writer = new FileWriter(configFile);
+		    gson.toJson(jObj, writer);
+		    writer.close();
+		} catch (IOException e) {
+			plugin.getLogger().severe("Error: Creating config.json");
 		}
 		
-		JSONParser parser = new JSONParser();
+		JsonParser parser = new JsonParser();
 		this.configEnum = new EnumMap<Configs, Object>(Configs.class);
 		
 		try {
-            Object obj = parser.parse(new FileReader(configFile));
-            jObj = (JSONObject) obj;
+			JsonElement jsonElement = parser.parse(new FileReader(configFile));
+	        jObj = jsonElement.getAsJsonObject();
             
-            if (!jObj.containsKey("port")) {
-            	jObj.put("port", "3306");
+            if (!jObj.has("port")) {
+            	jObj.addProperty("port", "3306");
             	configEnum.put(Configs.PORT, "3306");
             } else {
-            	configEnum.put(Configs.PORT, jObj.get("port"));
+            	configEnum.put(Configs.PORT, jObj.get("port").getAsString());
             }
-            if (!jObj.containsKey("ip")) {
-            	jObj.put("ip", "localhost");
+            if (!jObj.has("ip")) {
+            	jObj.addProperty("ip", "localhost");
             	configEnum.put(Configs.IP, "localhost");
             } else {
-            	configEnum.put(Configs.IP, jObj.get("ip"));
+            	configEnum.put(Configs.IP, jObj.get("ip").getAsString());
             }
-            if (!jObj.containsKey("password")) {
-            	jObj.put("password", "Password");
+            if (!jObj.has("password")) {
+            	jObj.addProperty("password", "Password");
             	configEnum.put(Configs.PASSWORD, "Password");
             } else {
-            	configEnum.put(Configs.PASSWORD, jObj.get("password"));
+            	configEnum.put(Configs.PASSWORD, jObj.get("password").getAsString());
             }
-            if (!jObj.containsKey("user")) {
-            	jObj.put("user", "admin");
+            if (!jObj.has("user")) {
+            	jObj.addProperty("user", "admin");
             	configEnum.put(Configs.USER, "admin");
             } else {
-            	configEnum.put(Configs.USER, jObj.get("user"));
+            	configEnum.put(Configs.USER, jObj.get("user").getAsString());
             }
-            if (!jObj.containsKey("database")) {
-            	jObj.put("database", "REDLEAFPERMISSIONS");
+            if (!jObj.has("database")) {
+            	jObj.addProperty("database", "REDLEAFPERMISSIONS");
             	configEnum.put(Configs.DATABASE, "REDLEAFPERMISSIONS");
             } else {
-            	configEnum.put(Configs.DATABASE, jObj.get("database"));
+            	configEnum.put(Configs.DATABASE, jObj.get("database").getAsString());
             }
-            
-        } catch (ParseException | IOException e) {Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Reading config.json");}
+        } catch (Exception e) {
+        	plugin.getLogger().severe("Error: Reading config.json");
+        }
 		
 		try {
-			FileWriter file = new FileWriter(configFile);
-	        file.write(jObj.toJSONString());
-	        file.flush();
-		} catch (IOException e) {Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error: Saving config.json");}
+			Writer writer = new FileWriter(configFile);
+		    gson.toJson(jObj, writer);
+		    writer.close();
+		} catch (IOException e) {
+			plugin.getLogger().severe("Error: Saving config.json");
+		}
 	}
 	
 	public Object getConfig(Configs key) {
