@@ -3,8 +3,8 @@ package com.akaiha.redleaf.entity;
 public class Child {
 	
 	private int id;
-	private int groupId;
-	private int childId;
+	private String groupName;
+	private String childName;
 
 	public int getId() {
 		return id;
@@ -14,19 +14,19 @@ public class Child {
 		this.id = id;
 	}
 
-	public int getGroupId() {
-		return groupId;
+	public String getChildName() {
+		return childName;
 	}
 
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
+	public void setChildName(String childName) {
+		this.childName = childName;
 	}
 
-	public int getChildId() {
-		return childId;
+	public String getGroupName() {
+		return groupName;
 	}
 
-	public void setChildId(int childId) {
-		this.childId = childId;
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

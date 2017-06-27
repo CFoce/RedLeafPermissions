@@ -1,46 +1,42 @@
 CREATE TABLE IF NOT EXISTS perm_group(
-id INT NOT NULL AUTO_INCREMENT,
 name_group VARCHAR(256) NOT NULL,
-PRIMARY KEY ( id ),
-UNIQUE KEY ( name_group )
+PRIMARY KEY ( name_group )
 );
 
 CREATE TABLE IF NOT EXISTS perm(
 id INT NOT NULL AUTO_INCREMENT,
 name_perm VARCHAR(256) NOT NULL,
-groupId INT NOT NULL,
+name_group VARCHAR(256) NOT NULL,
 PRIMARY KEY ( id ),
 KEY ( name_perm ),
-FOREIGN KEY (groupId) REFERENCES perm_group(id)
+FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
 );
 
 CREATE TABLE IF NOT EXISTS child(
 id INT NOT NULL AUTO_INCREMENT,
-childId INT NOT NULL,
-groupId INT NOT NULL,
+name_child VARCHAR(256) NOT NULL,
+name_group VARCHAR(256) NOT NULL,
 PRIMARY KEY ( id ),
-FOREIGN KEY (childId) REFERENCES perm_group(id),
-FOREIGN KEY (groupId) REFERENCES perm_group(id)
+FOREIGN KEY (name_child) REFERENCES perm_group(name_group),
+FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
 );
 
 CREATE TABLE IF NOT EXISTS perm_server(
 id INT NOT NULL AUTO_INCREMENT,
 name_server VARCHAR(256) NOT NULL,
-groupId INT NOT NULL,
+name_group VARCHAR(256) NOT NULL,
 state BOOLEAN DEFAULT FALSE,
 PRIMARY KEY ( id ),
 KEY ( name_server ),
 KEY ( state ),
-FOREIGN KEY (groupId) REFERENCES perm_group(id)
+FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
 );
 
-CREATE TABLE IF NOT EXISTS perm_world(
-id INT NOT NULL AUTO_INCREMENT,
-name_world VARCHAR(256) NOT NULL,
-serverId INT NOT NULL,
-state BOOLEAN DEFAULT FALSE,
-PRIMARY KEY ( id ),
-KEY ( name_world ),
-KEY ( state ),
-FOREIGN KEY (serverId) REFERENCES perm_server(id)
+CREATE TABLE IF NOT EXISTS player(
+uuid VARCHAR(256) NOT NULL,
+name_player VARCHAR(256) NOT NULL,
+name_group VARCHAR(256) NOT NULL,
+PRIMARY KEY ( uuid ),
+KEY ( name_player ),
+FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
 );

@@ -1,14 +1,11 @@
 package com.akaiha.redleaf.entity;
 
-import java.util.List;
-
 public class Server {
 
 	private int id;
 	private String name;
-	private int groupId;
+	private String groupName;
 	private boolean state = false;
-	private List<World> world;
 	
 	public int getId() {
 		return id;
@@ -26,14 +23,6 @@ public class Server {
 		this.name = name;
 	}
 
-	public int getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
-	}
-
 	public boolean isState() {
 		return state;
 	}
@@ -42,11 +31,11 @@ public class Server {
 		this.state = state;
 	}
 
-	public List<World> getWorld() {
-		return world;
+	public String getGroupName() {
+		return groupName;
 	}
 
-	public void setWorld(List<World> world) {
-		this.world = world;
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

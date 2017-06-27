@@ -3,7 +3,7 @@ package com.akaiha.redleaf.entity;
 public class Perm {
 
 	private int id;
-	private int groupId;
+	private String groupName;
 	private String perm;
 	
 	public String getPerm() {
@@ -14,20 +14,20 @@ public class Perm {
 		this.perm = perm;
 	}
 
-	public int getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
-	}
-
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 	
 }

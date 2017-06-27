@@ -58,10 +58,11 @@ public class DatabaseConfig {
 		        	   stm = conn.createStatement();
 		        	   if (!(boolean) RedLeaf.config.getConfig(Configs.INIT)) {
 		        		   sqlExecutor("/sql/init.sql", stm);
-		        		   RedLeaf.config.setConfig(Configs.INIT, false);
+		        		   RedLeaf.config.setConfig(Configs.INIT, true);
+		        		   RedLeaf.config.save();
 		        	   }
 		           } catch (Exception e) {
-		        	   plugin.getLogger().warning("Warn: Database Creation Issue.");
+		        	   plugin.getLogger().warning("Warn: Tables Creation Issue.");
 		           } finally {
 		        	   sqlChecker(stm);
 		           }
