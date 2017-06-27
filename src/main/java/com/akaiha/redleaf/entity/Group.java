@@ -6,8 +6,8 @@ public class Group {
 	
 	private int id;
 	private String name;
-	private String server;
-	private String world;
+	private List<Server> server;
+	private List<World> world;
 	private List<Child> children;
 	private List<Perm> perms;
 	
@@ -43,19 +43,19 @@ public class Group {
 		this.perms = perms;
 	}
 
-	public String getServer() {
+	public List<Server> getServer() {
 		return server;
 	}
 
-	public void setServer(String server) {
+	public void setServer(List<Server> server) {
 		this.server = server;
 	}
 
-	public String getWorld() {
+	public List<World> getWorld() {
 		return world;
 	}
 
-	public void setWorld(String world) {
+	public void setWorld(List<World> world) {
 		this.world = world;
 	}
 

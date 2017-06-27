@@ -10,8 +10,24 @@ repositories {
     maven {
     	url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+	extraLibs
 }
 
 dependencies {
     compile (group: 'net.md-5', name: 'bungeecord-api', version: bungeeVersion)
+    //compile 'com.github.CFoce:AccountsClient:BungeeCord-SNAPSHOT'
+}
+
+dependencies {
+    //extraLibs 'com.github.CFoce:AccountsClient:BungeeCord-SNAPSHOT'
+}
+
+jar {
+	from {
+            //configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+        }
 }

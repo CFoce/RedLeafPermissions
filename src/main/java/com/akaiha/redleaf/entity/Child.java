@@ -4,6 +4,7 @@ public class Child {
 	
 	private int id;
 	private int groupId;
+	private int childId;
 
 	public int getId() {
 		return id;
@@ -19,5 +20,13 @@ public class Child {
 
 	public void setGroupId(int groupId) {
 		this.groupId = groupId;
+	}
+
+	public int getChildId() {
+		return childId;
+	}
+
+	public void setChildId(int childId) {
+		this.childId = childId;
 	}
 }
