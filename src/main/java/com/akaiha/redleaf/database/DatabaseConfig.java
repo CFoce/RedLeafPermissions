@@ -22,12 +22,14 @@ public class DatabaseConfig {
 
 	private Plugin plugin;
 	private static String url;
-	private static final String DRIVER_NAME = "com.mysql.jdbc.Driver";
+	public static final String DRIVER_NAME = "com.mysql.jdbc.Driver";
 	private static String sqlNew;
 	private static String sqlUsed;
 	
 	public DatabaseConfig(Plugin plugin) {
 		this.plugin = plugin;
+		Database.setPlugin(plugin);
+		Database.setUrl("jdbc:mysql://" + (String) RedLeaf.config.getConfig(Configs.IP) + ":" + (String) RedLeaf.config.getConfig(Configs.PORT) + "/" + (String) RedLeaf.config.getConfig(Configs.DATABASE));
 	    File dir = new File((sqlNew = plugin.getDataFolder() + File.separator + "new sql"));
 		if (!dir.exists()) {
     		dir.mkdir();
