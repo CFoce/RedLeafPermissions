@@ -7,18 +7,17 @@ public class Group {
 	private int id;
 	private String name;
 	private List<Server> server;
-	private List<World> world;
 	private List<Child> children;
 	private List<Perm> perms;
 	
 	public int getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -50,13 +49,4 @@ public class Group {
 	public void setServer(List<Server> server) {
 		this.server = server;
 	}
-
-	public List<World> getWorld() {
-		return world;
-	}
-
-	public void setWorld(List<World> world) {
-		this.world = world;
-	}
-
 }

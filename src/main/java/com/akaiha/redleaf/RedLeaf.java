@@ -19,6 +19,7 @@ public class RedLeaf extends Plugin {
 	}
 	
 	public void onDisable() {
+		config.save();
 		config = null;
 	}
 }

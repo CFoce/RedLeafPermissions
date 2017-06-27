@@ -27,20 +27,46 @@ public class Config {
     		plugin.getDataFolder().mkdir();
     	}
 		this.configFile = new File(plugin.getDataFolder() + File.separator + "config.json");
-		loadConfigFile();
+		init();
+		load();
 	}
 	
-	private void loadConfigFile() {
+	public void init() {
 		JsonObject jObj = new JsonObject();
 		Gson gson = new GsonBuilder().create();
+		try {
+			if (!configFile.exists()) {
+				Writer writer = new FileWriter(configFile);
+			    gson.toJson(jObj, writer);
+			    writer.close();
+			}
+		} catch (IOException e) {
+			plugin.getLogger().severe("Error: Creating config.json");
+		}
+	}
+	
+	public void save() {
+		JsonObject jObj = new JsonObject();
+		Gson gson = new GsonBuilder().create();
+		
+		jObj.addProperty("port", (String) getConfig(Configs.PORT));
+		jObj.addProperty("ip", (String) getConfig(Configs.IP));
+		jObj.addProperty("password", (String) getConfig(Configs.PASSWORD));
+		jObj.addProperty("user", (String) getConfig(Configs.USER));
+		jObj.addProperty("database", (String) getConfig(Configs.DATABASE));
+		jObj.addProperty("init", (boolean) getConfig(Configs.INIT));
+		
 		try {
 			Writer writer = new FileWriter(configFile);
 		    gson.toJson(jObj, writer);
 		    writer.close();
 		} catch (IOException e) {
-			plugin.getLogger().severe("Error: Creating config.json");
+			plugin.getLogger().severe("Error: Saving config.json");
 		}
-		
+	}
+	
+	private void load() {
+		JsonObject jObj = new JsonObject();
 		JsonParser parser = new JsonParser();
 		this.configEnum = new EnumMap<Configs, Object>(Configs.class);
 		
@@ -78,20 +104,22 @@ public class Config {
             } else {
             	configEnum.put(Configs.DATABASE, jObj.get("database").getAsString());
             }
+            if (!jObj.has("init")) {
+            	jObj.addProperty("init", false);
+            	configEnum.put(Configs.INIT, false);
+            } else {
+            	configEnum.put(Configs.INIT, jObj.get("init").getAsBoolean());
+            }
         } catch (Exception e) {
         	plugin.getLogger().severe("Error: Reading config.json");
         }
-		
-		try {
-			Writer writer = new FileWriter(configFile);
-		    gson.toJson(jObj, writer);
-		    writer.close();
-		} catch (IOException e) {
-			plugin.getLogger().severe("Error: Saving config.json");
-		}
 	}
 	
 	public Object getConfig(Configs key) {
 		return configEnum.get(key);
+	}
+	
+	public void setConfig(Configs key, Object value) {
+		configEnum.put(key, value);
 	}
 }
