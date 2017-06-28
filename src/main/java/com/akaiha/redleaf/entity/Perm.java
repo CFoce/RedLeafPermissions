@@ -29,5 +29,4 @@ public class Perm {
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
 	}
-	
 }
