@@ -2,5 +2,7 @@ package com.akaiha.redleaf.enums;
 
 public enum RedLeafCommands
 {
-	GROUP
+	GROUP,
+	PROMOTE,
+	DEMOTE
 }
