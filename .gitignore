@@ -51,3 +51,7 @@ Temporary Items
 bin/
 /build/
 build/
+
+# Eclipse settings
+/.settings/
+.settings/
