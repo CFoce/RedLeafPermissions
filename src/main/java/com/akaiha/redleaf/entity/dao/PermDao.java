@@ -13,7 +13,7 @@ public class PermDao {
 	
 	private Database data = new Database();
 
-	public List<Perm> getPermListByName(String name){
+	public List<Perm> getByName(String name){
 		List<Perm> results = new ArrayList<Perm>();
 		Perm perm;
 		try {
@@ -38,7 +38,7 @@ public class PermDao {
 		return results;
 	}
 	
-	public List<Perm> getPermListByGroup(String group){
+	public List<Perm> getByGroup(String group){
 		List<Perm> results = new ArrayList<Perm>();
 		Perm perm;
 		try {
@@ -61,5 +61,25 @@ public class PermDao {
 			}
 		}
 		return results;
+	}
+	
+	public void create(String group, String perm) {
+		
+	}
+	
+	public void delete(String group, String perm) {
+		
+	}
+	
+	public void deleteByGroup(String group) {
+		
+	}
+	
+	public void deleteByPerm(String perm) {
+		
+	}
+	
+	public boolean has(String group, String perm) {
+		return false;
 	}
 }

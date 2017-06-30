@@ -12,33 +12,8 @@ import com.akaiha.redleaf.entity.Player;
 public class PlayerDao {
 	
 	private Database data = new Database();
-
-	public List<Player> getPlayerListByName(String name){
-		List<Player> results = new ArrayList<Player>();
-		Player player;
-		try {
-			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("Select * from player where name_player like '" + name + "'");
-			while (rs.next()) {
-				  player = new Player();
-				  player.setGroupName(rs.getString("name_group"));
-				  player.setName(name);
-				  player.setUuid(rs.getString("uuid"));
-				  results.add(player);
-				}
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-		return results;
-	}
 	
-	public List<Player> getPlayerListByUUID(String uuid){
+	public List<Player> getByUUID(String uuid){
 		List<Player> results = new ArrayList<Player>();
 		Player player;
 		try {
@@ -63,7 +38,7 @@ public class PlayerDao {
 		return results;
 	}
 	
-	public List<Player> getPlayerListByGroup(String group){
+	public List<Player> getByGroup(String group){
 		List<Player> results = new ArrayList<Player>();
 		Player player;
 		try {
@@ -86,5 +61,25 @@ public class PlayerDao {
 			}
 		}
 		return results;
+	}
+	
+	public void create(String UUID, String group) {
+		
+	}
+	
+	public void delete(String UUID, String group) {
+		
+	}
+	
+	public void deleteByGroup(String group) {
+		
+	}
+	
+	public void deleteByUUID(String UUID) {
+		
+	}
+	
+	public boolean has(String UUID, String group) {
+		return false;
 	}
 }
