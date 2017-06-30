@@ -13,7 +13,7 @@ public class ChildDao {
 
 	private Database data = new Database();
 
-	public List<Child> getChildListByChild(String name){
+	public List<Child> getByChild(String name){
 		List<Child> results = new ArrayList<Child>();
 		Child child;
 		try {
@@ -38,7 +38,7 @@ public class ChildDao {
 		return results;
 	}
 	
-	public List<Child> getChildListByGroup(String name){
+	public List<Child> getByGroup(String name){
 		List<Child> results = new ArrayList<Child>();
 		Child child;
 		try {
@@ -61,5 +61,25 @@ public class ChildDao {
 			}
 		}
 		return results;
+	}
+	
+	public boolean has(String group, String child) {
+		return false;
+	}
+	
+	public void create(String group, String child) {
+		
+	}
+	
+	public void delete(String group, String child) {
+		
+	}
+	
+	public void deleteByGroup(String group) {
+		
+	}
+
+	public void deleteByChild(String group) {
+	
 	}
 }
