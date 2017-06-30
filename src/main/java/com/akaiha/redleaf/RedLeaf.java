@@ -1,6 +1,6 @@
 package com.akaiha.redleaf;
 
-import com.akaiha.redleaf.commands.RedLeafCommand;
+import com.akaiha.redleaf.commands.PermsCommand;
 import com.akaiha.redleaf.config.Config;
 import com.akaiha.redleaf.database.DatabaseConfig;
 
@@ -27,6 +27,6 @@ public class RedLeaf extends Plugin
 
 	public void registerCommands()
 	{
-		getProxy().getPluginManager().registerCommand(this, new RedLeafCommand(this));
+		getProxy().getPluginManager().registerCommand(this, new PermsCommand(this));
 	}
 }

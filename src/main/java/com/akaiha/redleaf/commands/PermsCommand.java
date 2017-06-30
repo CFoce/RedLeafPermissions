@@ -13,13 +13,13 @@ import com.akaiha.redleaf.enums.RedLeafCommands;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
-public class RedLeafCommand extends Command
+public class PermsCommand extends Command
 {
 	private EnumMap<RedLeafCommands, BasicCommand> commands;
 	RedLeaf plugin;
-	public RedLeafCommand(RedLeaf plugin)
+	public PermsCommand(RedLeaf plugin)
 	{
-		super("redleaf");
+		super("perms");
 		this.plugin = plugin;
 		this.commands = new EnumMap<RedLeafCommands, BasicCommand>(RedLeafCommands.class);
 		loadCommands();
