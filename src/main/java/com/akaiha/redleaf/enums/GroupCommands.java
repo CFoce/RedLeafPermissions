@@ -1,0 +1,20 @@
+package com.akaiha.redleaf.enums;
+
+public enum GroupCommands
+{
+	CREATE,
+	DELETE,
+	LIST,
+	ADDPLAYER,
+	ADDSERVER,
+	ADDPERM,
+	ADDCHILD,
+	LISTPLAYER,
+	LISTSERVER,
+	LISTPERM,
+	LISTCHILD,
+	REMOVEPLAYER,
+	REMOVESERVER,
+	REMOVEPERM,
+	REMOVECHILD
+}

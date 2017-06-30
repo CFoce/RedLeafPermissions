@@ -1,21 +1,32 @@
 package com.akaiha.redleaf;
 
+import com.akaiha.redleaf.commands.RedLeafCommand;
 import com.akaiha.redleaf.config.Config;
 import com.akaiha.redleaf.database.DatabaseConfig;
 
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class RedLeaf extends Plugin {
-
+public class RedLeaf extends Plugin
+{
 	public static Config config;
-	
-	public void onEnable() {
+
+	public void onEnable()
+	{
 		config = new Config(this);
 		new DatabaseConfig(this);
+
+		// REGISTERING COMMANDS
+		registerCommands();
 	}
-	
-	public void onDisable() {
+
+	public void onDisable()
+	{
 		config.save();
 		config = null;
+	}
+
+	public void registerCommands()
+	{
+		getProxy().getPluginManager().registerCommand(this, new RedLeafCommand(this));
 	}
 }
