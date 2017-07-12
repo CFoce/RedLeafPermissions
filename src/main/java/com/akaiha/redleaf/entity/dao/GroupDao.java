@@ -31,12 +31,34 @@ public class GroupDao {
 		return result;
 	}
 	
-	public void create(String Name) {
-		
+	public void create(String name) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO perm_group (name_group) VALUES ('" + name + "')");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
-	public void delete(String Name) {
-		
+	public void delete(String name) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm_group WHERE name_group = '" + name + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public List<Group> getAll() {

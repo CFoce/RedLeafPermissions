@@ -1,5 +1,8 @@
 package com.akaiha.redleaf.entity.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,51 +14,167 @@ public class ServerDao {
 	private Database data = new Database();
 
 	public List<Server> getByName(String name){
-		return new ArrayList<Server>();
+		List<Server> results = new ArrayList<Server>();
+		Server server;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from perm_server where name_server like '" + name + "'");
+			while (rs.next()) {
+				  server = new Server();
+				  server.setGroupName(rs.getString("name_group"));
+				  server.setId(rs.getInt("id"));
+				  server.setName(name);
+				  server.setState(rs.getBoolean("state"));
+				  results.add(server);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
 	}
 	
 	public List<Server> getByGroup(String group) {
-		return new ArrayList<Server>();
-	}
-	
-	public List<Server> getDefaults(String group) {
-		return new ArrayList<Server>();
+		List<Server> results = new ArrayList<Server>();
+		Server server;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from perm_server where name_group like '" + group + "'");
+			while (rs.next()) {
+				  server = new Server();
+				  server.setName(rs.getString("name_server"));
+				  server.setId(rs.getInt("id"));
+				  server.setGroupName(group);
+				  server.setState(rs.getBoolean("state"));
+				  results.add(server);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
 	}
 	
 	public List<Server> getDefaultsByServer(String group) {
 		return new ArrayList<Server>();
 	}
 	
-	public List<Server> getDefaultsByNames(String group) {
+	public List<Server> getDefaultsByGroup(String group) {
 		return new ArrayList<Server>();
 	}
 	
-	//state isnt required unless true it defaults to false
 	public void create(String group, String name, boolean state) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO perm_server (name_server, name_group, state) VALUES ('" + name + "','" + group + "'," + state + ")");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void create(String group, String name) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO perm_server (name_server, name_group) VALUES ('" + name + "','" + group + "')");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void delete(String group, String name) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm_server WHERE name_server = '" + name + "' AND name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void deleteByGroup(String group) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm_server WHERE name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void deleteByName(String name) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm_server WHERE name_server = '" + name + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
-	public void has(String group, String name) {
-		
+	public boolean has(String group, String name) {
+		boolean result = false;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from perm_server where name_group = '" + group + "' AND name_server = '" + name + "'");
+			result = rs.first();
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return result;
 	}
 	
 	public void changeState(String group, String name, boolean state) {
+		
+	}
+	
+	public void changeStateByGroup(String group, boolean state) {
+		
+	}
+
+	public void changeStateByServer(String name, boolean state) {
 		
 	}
 }
