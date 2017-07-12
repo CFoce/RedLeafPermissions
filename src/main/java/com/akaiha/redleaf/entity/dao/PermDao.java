@@ -64,22 +64,80 @@ public class PermDao {
 	}
 	
 	public void create(String group, String perm) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO perm (name_group, name_perm) VALUES ('" + group + "','" + perm + "')");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void delete(String group, String perm) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm WHERE name_perm = '" + perm + "' AND name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void deleteByGroup(String group) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm WHERE name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void deleteByPerm(String perm) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM perm WHERE name_perm = '" + perm + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public boolean has(String group, String perm) {
-		return false;
+		boolean result = false;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from perm where name_group = '" + group + "' AND name_perm = '" + perm + "'");
+			result = rs.first();
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return result;
 	}
 }

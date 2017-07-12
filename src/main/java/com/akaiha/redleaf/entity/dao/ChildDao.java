@@ -64,22 +64,80 @@ public class ChildDao {
 	}
 	
 	public boolean has(String group, String child) {
-		return false;
+		boolean result = false;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from child where name_group = '" + group + "' AND name_child = '" + child + "'");
+			result = rs.first();
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return result;
 	}
 	
 	public void create(String group, String child) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO child (name_child, name_group) VALUES ('" + child + "','" + group + "')");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void delete(String group, String child) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM child WHERE name_child = '" + child + "' AND name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void deleteByGroup(String group) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM child WHERE name_group = '" + group + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 
-	public void deleteByChild(String group) {
-	
+	public void deleteByChild(String child) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("DELETE FROM child WHERE name_child = '" + child + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 }
