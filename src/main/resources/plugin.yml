@@ -4,6 +4,5 @@ version: 0.1
 authors: [Akaiha, greaperc4]
 
 commands:
-  redleaf:
-    aliases: [rl, rlp]
-    description: RedLeaf command
+  Perms:
+    description: Perms command
