@@ -5,6 +5,7 @@ public class Perm {
 	private int id;
 	private String groupName;
 	private String perm;
+	private boolean bungee;
 	
 	public String getPerm() {
 		return perm;
@@ -28,5 +29,13 @@ public class Perm {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+	
+	public boolean getBungee() {
+		return bungee;
+	}
+	
+	public void setBungee(boolean bungee) {
+		this.bungee = bungee;
 	}
 }
