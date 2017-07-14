@@ -24,6 +24,7 @@ public class PermDao {
 				  perm.setGroupName(rs.getString("name_group"));
 				  perm.setId(rs.getInt("id"));
 				  perm.setPerm(name);
+				  perm.setBungee(rs.getBoolean("state"));
 				  results.add(perm);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -49,6 +50,7 @@ public class PermDao {
 				  perm.setGroupName(group);
 				  perm.setPerm(rs.getString("name_perm"));
 				  perm.setId(rs.getInt("id"));
+				  perm.setBungee(rs.getBoolean("state"));
 				  results.add(perm);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -61,6 +63,21 @@ public class PermDao {
 			}
 		}
 		return results;
+	}
+	
+	public void create(String group, String perm, boolean state) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeQuery("INSERT INTO perm (name_group, name_perm, state) VALUES ('" + group + "','" + perm + "'," + state + ")");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 	
 	public void create(String group, String perm) {

@@ -2,6 +2,7 @@ package com.akaiha.redleaf.commands.group;
 
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
+import com.akaiha.redleaf.entity.dao.GroupDao;
 
 import net.md_5.bungee.api.CommandSender;
 
@@ -19,8 +20,10 @@ public class CreateGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
-		// TODO: EXECUTE CREATE GROUP
-		
+		GroupDao dao = new GroupDao();
+		if (!dao.has(args[0]))
+			dao.create(args[0]);
+			
 		return true;
 	}
 

@@ -2,6 +2,7 @@ package com.akaiha.redleaf.commands.group;
 
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
+import com.akaiha.redleaf.entity.dao.PermDao;
 
 import net.md_5.bungee.api.CommandSender;
 
@@ -19,7 +20,10 @@ public class RemovePermFromGroupCommand implements BasicCommand
 		if (sender.hasPermission(getPermission()))
 			return false;
 
-		// TODO: EXECUTE REMOVE PERM FROM THE GROUP
+		PermDao pDao = new PermDao();
+		if (pDao.has(args[0], args[1])) {
+			pDao.delete(args[0], args[1]);
+		}
 		
 		return true;
 	}
