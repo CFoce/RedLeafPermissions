@@ -70,13 +70,13 @@ public class ServerDao {
 		Server serv;
 		try {
 			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("Select * from perm_server where name_server like '" + server + "'");
+			ResultSet rs = stm.executeQuery("Select * from perm_server where name_server = '" + server + "' AND state = " + true);
 			while (rs.next()) {
 				  serv = new Server();
 				  serv.setName(server);
 				  serv.setId(rs.getInt("id"));
 				  serv.setGroupName(rs.getString("name_group"));
-				  serv.setState(rs.getBoolean("state"));
+				  serv.setState(true);
 				  results.add(serv);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
@@ -92,7 +92,29 @@ public class ServerDao {
 	}
 	
 	public List<Server> getDefaultsByGroup(String group) {
-		return new ArrayList<Server>();
+		List<Server> results = new ArrayList<Server>();
+		Server serv;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from perm_server where name_group = '" + group + "' AND state = " + true);
+			while (rs.next()) {
+				  serv = new Server();
+				  serv.setName(rs.getString("name_server"));
+				  serv.setId(rs.getInt("id"));
+				  serv.setGroupName(group);
+				  serv.setState(true);
+				  results.add(serv);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
 	}
 	
 	public void create(String group, String name, boolean state) {
