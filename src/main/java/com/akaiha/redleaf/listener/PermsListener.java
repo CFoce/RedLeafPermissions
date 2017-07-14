@@ -1,5 +1,8 @@
 package com.akaiha.redleaf.listener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,11 +13,11 @@ import com.akaiha.redleaf.entity.Group;
 import com.akaiha.redleaf.entity.Perm;
 import com.akaiha.redleaf.entity.Player;
 import com.akaiha.redleaf.entity.dao.ChildDao;
-import com.akaiha.redleaf.entity.dao.GroupDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
 
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -27,13 +30,13 @@ public class PermsListener implements Listener {
 	private ChildDao childDao = new ChildDao();
 	private PermDao permDao = new PermDao();
 	private ServerDao serverDao = new ServerDao();
-	private GroupDao groupDao = new GroupDao();
 	
 	@EventHandler
 	public void listener(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
-		String serverName = player.getServer().getInfo().getName();
+		ServerInfo server = player.getServer().getInfo();
+		String serverName = server.getName();
 		List<Perm> perms = new ArrayList<Perm>();
 		if(playerDao.has(uuid)) {
 			List<Player> groups = playerDao.getByUUID(uuid);
@@ -46,7 +49,7 @@ public class PermsListener implements Listener {
 			perms.addAll(getAllPerms(serverName, group));
 		}
 		
-		String permSet = "";
+		String permSet = uuid;
 		for (int i = 0; i < perms.size(); i++) {
 			if (perms.get(i).getBungee()) {
 				player.setPermission(perms.get(i).getPerm(), true);
@@ -55,8 +58,14 @@ public class PermsListener implements Listener {
 			}
 		}
 		
-		
-		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+        try {
+            out.writeUTF(permSet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        server.sendData("Perms", stream.toByteArray());
 	}
 	
 	@EventHandler

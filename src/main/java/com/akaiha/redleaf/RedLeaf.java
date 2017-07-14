@@ -5,6 +5,7 @@ import com.akaiha.redleaf.config.Config;
 import com.akaiha.redleaf.database.DatabaseConfig;
 import com.akaiha.redleaf.listener.PermsListener;
 
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class RedLeaf extends Plugin
@@ -20,7 +21,7 @@ public class RedLeaf extends Plugin
 		registerCommands();
 		// register listener
 		registerListener();
-		
+		BungeeCord.getInstance().registerChannel("Perms");
 	}
 
 	public void onDisable() {
