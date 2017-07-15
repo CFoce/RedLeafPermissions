@@ -12,6 +12,7 @@ import com.akaiha.redleaf.entity.Child;
 import com.akaiha.redleaf.entity.Group;
 import com.akaiha.redleaf.entity.Perm;
 import com.akaiha.redleaf.entity.Player;
+import com.akaiha.redleaf.entity.Server;
 import com.akaiha.redleaf.entity.dao.ChildDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
@@ -22,6 +23,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
 public class PermsListener implements Listener {
@@ -30,13 +32,19 @@ public class PermsListener implements Listener {
 	private ChildDao childDao = new ChildDao();
 	private PermDao permDao = new PermDao();
 	private ServerDao serverDao = new ServerDao();
+	private Plugin plugin;
+	
+	public PermsListener(Plugin plugin) {
+		this.plugin = plugin;
+	}
 	
 	@EventHandler
-	public void listener(ServerConnectedEvent event) {
+	public void connected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
-		ServerInfo server = player.getServer().getInfo();
+		ServerInfo server = event.getServer().getInfo();
 		String serverName = server.getName();
+		plugin.getLogger().severe(serverName);
 		List<Perm> perms = new ArrayList<Perm>();
 		if(playerDao.has(uuid)) {
 			List<Player> groups = playerDao.getByUUID(uuid);
@@ -49,12 +57,17 @@ public class PermsListener implements Listener {
 			perms.addAll(getAllPerms(serverName, group));
 		}
 		
+		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
+		for (int i = 0; i < defaults.size(); i++) {
+			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
+		}
+		
 		String permSet = uuid;
 		for (int i = 0; i < perms.size(); i++) {
 			if (perms.get(i).getBungee()) {
 				player.setPermission(perms.get(i).getPerm(), true);
 			} else {
-				permSet += "," + perms.get(i).getPerm();
+				permSet = permSet + "," + perms.get(i).getPerm();
 			}
 		}
 		
@@ -69,12 +82,13 @@ public class PermsListener implements Listener {
 	}
 	
 	@EventHandler
-	public void listener(ServerConnectEvent event) {
-		ProxiedPlayer player = event.getPlayer();
+	public void connecting(ServerConnectEvent event) {
+		/*ProxiedPlayer player = event.getPlayer();
 		Collection<String> perms = player.getPermissions();
 		for (Iterator<String> iterator = perms.iterator(); iterator.hasNext();) {
 	        player.setPermission(iterator.next(), false);
 	    }
+	    */
 	}
 	
 	private List<Perm> getAllPerms(String serverName, List<Group> groups) {

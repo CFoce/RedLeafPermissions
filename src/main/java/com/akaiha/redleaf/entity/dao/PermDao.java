@@ -68,7 +68,7 @@ public class PermDao {
 	public void create(String group, String perm, boolean state) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO perm (name_group, name_perm, state) VALUES ('" + group + "','" + perm + "'," + state + ")");
+			stm.executeUpdate("INSERT INTO perm (name_group, name_perm, state) VALUES ('" + group + "','" + perm + "'," + state + ")");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -83,7 +83,7 @@ public class PermDao {
 	public void create(String group, String perm) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO perm (name_group, name_perm) VALUES ('" + group + "','" + perm + "')");
+			stm.executeUpdate("INSERT INTO perm (name_group, name_perm) VALUES ('" + group + "','" + perm + "')");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -98,7 +98,7 @@ public class PermDao {
 	public void delete(String group, String perm) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm WHERE name_perm = '" + perm + "' AND name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM perm WHERE name_perm = '" + perm + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -113,7 +113,7 @@ public class PermDao {
 	public void deleteByGroup(String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm WHERE name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM perm WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -128,7 +128,7 @@ public class PermDao {
 	public void deleteByPerm(String perm) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm WHERE name_perm = '" + perm + "'");
+			stm.executeUpdate("DELETE FROM perm WHERE name_perm = '" + perm + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {

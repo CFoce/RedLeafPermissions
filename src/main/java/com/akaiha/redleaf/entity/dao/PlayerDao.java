@@ -66,7 +66,7 @@ public class PlayerDao {
 	public void create(String UUID, String name, String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO player (name_player, name_group, uuid) VALUES ('" + name + "','" + group + "','" + UUID + "')");
+			stm.executeUpdate("INSERT INTO player (name_player, name_group, uuid) VALUES ('" + name + "','" + group + "','" + UUID + "')");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -81,7 +81,7 @@ public class PlayerDao {
 	public void delete(String UUID, String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM player WHERE uuid = '" + UUID + "' AND name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM player WHERE uuid = '" + UUID + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -96,7 +96,7 @@ public class PlayerDao {
 	public void deleteByGroup(String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM player WHERE name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM player WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -111,7 +111,7 @@ public class PlayerDao {
 	public void deleteByUUID(String UUID) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM player WHERE uuid = '" + UUID + "'");
+			stm.executeUpdate("DELETE FROM player WHERE uuid = '" + UUID + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
