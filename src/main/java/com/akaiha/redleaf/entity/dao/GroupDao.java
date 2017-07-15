@@ -17,7 +17,7 @@ public class GroupDao {
 		boolean result = false;
 		try {
 			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("Select * from perm_group where name_group like '" + name + "'");
+			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
@@ -34,13 +34,15 @@ public class GroupDao {
 	public void create(String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO perm_group (name_group) VALUES ('" + name + "')");
+			stm.executeUpdate("INSERT INTO perm_group (name_group) VALUES ('" + name + "')");
 		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
 			data.error();
 		} finally {
 			try {
 				data.disconnect();
 			} catch (SQLException e) {
+				e.printStackTrace();
 				data.error();
 			}
 		}
@@ -49,7 +51,7 @@ public class GroupDao {
 	public void delete(String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm_group WHERE name_group = '" + name + "'");
+			stm.executeUpdate("DELETE FROM perm_group WHERE name_group = '" + name + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {

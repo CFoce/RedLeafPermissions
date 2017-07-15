@@ -21,7 +21,7 @@ public class Database {
 	
 	public Connection connect() throws ClassNotFoundException, SQLException {
 		Class.forName(DatabaseConfig.DRIVER_NAME);
-		this.conn = DriverManager.getConnection(url,(String) RedLeaf.config.getConfig(Configs.USER),(String) RedLeaf.config.getConfig(Configs.PASSWORD));;
+		this.conn = DriverManager.getConnection(url,(String) RedLeaf.config.getConfig(Configs.USER),(String) RedLeaf.config.getConfig(Configs.PASSWORD));
 		return conn;
 	}
 	

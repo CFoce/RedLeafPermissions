@@ -84,7 +84,7 @@ public class ChildDao {
 	public void create(String group, String child) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO child (name_child, name_group) VALUES ('" + child + "','" + group + "')");
+			stm.executeUpdate("INSERT INTO child (name_child, name_group) VALUES ('" + child + "','" + group + "')");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -99,7 +99,7 @@ public class ChildDao {
 	public void delete(String group, String child) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM child WHERE name_child = '" + child + "' AND name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM child WHERE name_child = '" + child + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -114,7 +114,7 @@ public class ChildDao {
 	public void deleteByGroup(String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM child WHERE name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM child WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -129,7 +129,7 @@ public class ChildDao {
 	public void deleteByChild(String child) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM child WHERE name_child = '" + child + "'");
+			stm.executeUpdate("DELETE FROM child WHERE name_child = '" + child + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {

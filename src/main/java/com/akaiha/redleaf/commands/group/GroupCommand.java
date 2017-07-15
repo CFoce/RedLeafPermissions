@@ -1,5 +1,6 @@
 package com.akaiha.redleaf.commands.group;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
 import com.akaiha.redleaf.enums.GroupCommands;
+import com.akaiha.redleaf.enums.RedLeafCommands;
 
 import net.md_5.bungee.api.CommandSender;
 
@@ -52,13 +54,13 @@ public class GroupCommand implements BasicCommand
 
 		if (args.length > 0)
 		{
-			String subArg = args[0].toLowerCase();
-			List<String> subArgs = Arrays.asList(args);
-			subArgs.remove(0);
-			args = subArgs.toArray(new String[0]);
+			GroupCommands subArg =GroupCommands.valueOf(args[0].toUpperCase());
 
 			if (commands.containsKey(subArg))
 			{
+				List<String> subArgs = new ArrayList<String>(Arrays.asList(args));
+				subArgs.remove(0);
+				args = subArgs.toArray(new String[0]);
 				commands.get(subArg).onCommand(sender, args);
 				return true;
 			}

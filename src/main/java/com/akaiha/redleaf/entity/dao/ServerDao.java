@@ -120,7 +120,7 @@ public class ServerDao {
 	public void create(String group, String name, boolean state) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO perm_server (name_server, name_group, state) VALUES ('" + name + "','" + group + "'," + state + ")");
+			stm.executeUpdate("INSERT INTO perm_server (name_server, name_group, state) VALUES ('" + name + "','" + group + "'," + state + ")");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -135,7 +135,7 @@ public class ServerDao {
 	public void create(String group, String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("INSERT INTO perm_server (name_server, name_group) VALUES ('" + name + "','" + group + "')");
+			stm.executeUpdate("INSERT INTO perm_server (name_server, name_group) VALUES ('" + name + "','" + group + "')");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -150,7 +150,7 @@ public class ServerDao {
 	public void delete(String group, String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm_server WHERE name_server = '" + name + "' AND name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM perm_server WHERE name_server = '" + name + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -165,7 +165,7 @@ public class ServerDao {
 	public void deleteByGroup(String group) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm_server WHERE name_group = '" + group + "'");
+			stm.executeUpdate("DELETE FROM perm_server WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
@@ -180,7 +180,7 @@ public class ServerDao {
 	public void deleteByName(String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeQuery("DELETE FROM perm_server WHERE name_server = '" + name + "'");
+			stm.executeUpdate("DELETE FROM perm_server WHERE name_server = '" + name + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error();
 		} finally {
