@@ -12,6 +12,10 @@ import com.akaiha.redleaf.entity.Server;
 public class ServerDao {
 
 	private Database data = new Database();
+	
+	private String name() {
+		return "ServerDao ";
+	}
 
 	public List<Server> getByName(String name){
 		List<Server> results = new ArrayList<Server>();
@@ -28,7 +32,7 @@ public class ServerDao {
 				  results.add(server);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByName");
 		} finally {
 			try {
 				data.disconnect();
@@ -54,7 +58,7 @@ public class ServerDao {
 				  results.add(server);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -80,7 +84,7 @@ public class ServerDao {
 				  results.add(serv);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getDefaultsByServer");
 		} finally {
 			try {
 				data.disconnect();
@@ -106,7 +110,7 @@ public class ServerDao {
 				  results.add(serv);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getDefaultsByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -122,7 +126,7 @@ public class ServerDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("INSERT INTO perm_server (name_server, name_group, state) VALUES ('" + name + "','" + group + "'," + state + ")");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -137,7 +141,7 @@ public class ServerDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("INSERT INTO perm_server (name_server, name_group) VALUES ('" + name + "','" + group + "')");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -152,7 +156,7 @@ public class ServerDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm_server WHERE name_server = '" + name + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "delete");
 		} finally {
 			try {
 				data.disconnect();
@@ -167,7 +171,7 @@ public class ServerDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm_server WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -182,7 +186,7 @@ public class ServerDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm_server WHERE name_server = '" + name + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByName");
 		} finally {
 			try {
 				data.disconnect();
@@ -199,7 +203,7 @@ public class ServerDao {
 			ResultSet rs = stm.executeQuery("Select * from perm_server where name_group = '" + group + "' AND name_server = '" + name + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() +  "has");
 		} finally {
 			try {
 				data.disconnect();

@@ -19,6 +19,12 @@ public class PromoteCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		// <player> <group>
 		
 		// TODO: EXECUTE PROMOTE

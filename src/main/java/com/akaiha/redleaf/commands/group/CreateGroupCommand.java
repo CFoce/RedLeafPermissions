@@ -20,9 +20,14 @@ public class CreateGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
-		GroupDao dao = new GroupDao();
-		if (!dao.has(args[0]))
-			dao.create(args[0]);
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	GroupDao dao = new GroupDao();
+        		if (!dao.has(args[0]))
+        			dao.create(args[0]);
+            }
+		});
 			
 		return true;
 	}

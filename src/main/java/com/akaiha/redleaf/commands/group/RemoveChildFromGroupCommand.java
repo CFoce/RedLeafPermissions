@@ -18,9 +18,15 @@ public class RemoveChildFromGroupCommand implements BasicCommand
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args)
 	{
-		if (sender.hasPermission(getPermission()))
+		if (!sender.hasPermission(getPermission()))
 			return false;
 
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		ChildDao cDao = new ChildDao();
 		if (cDao.has(args[0], args[1])) {
 			cDao.delete(args[0], args[1]);

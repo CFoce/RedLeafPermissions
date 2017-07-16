@@ -12,6 +12,10 @@ import com.akaiha.redleaf.entity.Child;
 public class ChildDao {
 
 	private Database data = new Database();
+	
+	private String name() {
+		return "ChildDao ";
+	}
 
 	public List<Child> getByChild(String name){
 		List<Child> results = new ArrayList<Child>();
@@ -27,7 +31,7 @@ public class ChildDao {
 				  results.add(child);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByChild");
 		} finally {
 			try {
 				data.disconnect();
@@ -52,7 +56,7 @@ public class ChildDao {
 				  results.add(child);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -70,7 +74,7 @@ public class ChildDao {
 			ResultSet rs = stm.executeQuery("Select * from child where name_group = '" + group + "' AND name_child = '" + child + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "has");
 		} finally {
 			try {
 				data.disconnect();
@@ -86,7 +90,7 @@ public class ChildDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("INSERT INTO child (name_child, name_group) VALUES ('" + child + "','" + group + "')");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -101,7 +105,7 @@ public class ChildDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM child WHERE name_child = '" + child + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "delete");
 		} finally {
 			try {
 				data.disconnect();
@@ -116,7 +120,7 @@ public class ChildDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM child WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -131,7 +135,7 @@ public class ChildDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM child WHERE name_child = '" + child + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByChild");
 		} finally {
 			try {
 				data.disconnect();

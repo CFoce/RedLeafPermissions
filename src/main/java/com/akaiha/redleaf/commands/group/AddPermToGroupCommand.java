@@ -21,6 +21,12 @@ public class AddPermToGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		GroupDao dao = new GroupDao();
 		PermDao pDao = new PermDao();
 		if (dao.has(args[0]) && !pDao.has(args[0], args[1])) {

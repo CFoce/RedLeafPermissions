@@ -12,6 +12,10 @@ import com.akaiha.redleaf.entity.Group;
 public class GroupDao {
 
 	private Database data = new Database();
+	
+	private String name() {
+		return "GroupDao ";
+	}
 
 	public boolean has(String name) {
 		boolean result = false;
@@ -20,7 +24,7 @@ public class GroupDao {
 			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "has");
 		} finally {
 			try {
 				data.disconnect();
@@ -37,7 +41,7 @@ public class GroupDao {
 			stm.executeUpdate("INSERT INTO perm_group (name_group) VALUES ('" + name + "')");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -53,7 +57,7 @@ public class GroupDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm_group WHERE name_group = '" + name + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "delete");
 		} finally {
 			try {
 				data.disconnect();

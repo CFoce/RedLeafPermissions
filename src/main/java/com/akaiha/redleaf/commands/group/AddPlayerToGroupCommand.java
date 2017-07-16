@@ -23,6 +23,12 @@ public class AddPlayerToGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		GroupDao dao = new GroupDao();
 		PlayerDao pDao = new PlayerDao();
 		Profile[] profile = new HttpProfileRepository("minecraft").findProfilesByNames(args[1]);
