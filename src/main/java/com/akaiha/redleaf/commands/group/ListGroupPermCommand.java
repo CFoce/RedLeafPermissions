@@ -16,9 +16,15 @@ public class ListGroupPermCommand implements BasicCommand
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args)
 	{
-		if (sender.hasPermission(getPermission()))
+		if (!sender.hasPermission(getPermission()))
 			return false;
 
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		// TODO: EXECUTE LIST PERMS OF THE GROUP
 		
 		return true;

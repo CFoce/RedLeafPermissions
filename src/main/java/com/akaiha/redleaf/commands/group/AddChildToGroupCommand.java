@@ -21,11 +21,16 @@ public class AddChildToGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
-		GroupDao dao = new GroupDao();
-		ChildDao cDao = new ChildDao();
-		if (dao.has(args[0]) && !cDao.has(args[0], args[1]) && !cDao.has(args[1], args[0])) {
-			cDao.create(args[0], args[1]);
-		}
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	GroupDao dao = new GroupDao();
+        		ChildDao cDao = new ChildDao();
+        		if (dao.has(args[0]) && !cDao.has(args[0], args[1]) && !cDao.has(args[1], args[0])) {
+        			cDao.create(args[0], args[1]);
+        		}
+            }
+		});
 		
 		return true;
 	}

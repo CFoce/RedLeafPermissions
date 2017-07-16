@@ -12,6 +12,10 @@ import com.akaiha.redleaf.entity.Perm;
 public class PermDao {
 	
 	private Database data = new Database();
+	
+	private String name() {
+		return "PermDao ";
+	}
 
 	public List<Perm> getByName(String name){
 		List<Perm> results = new ArrayList<Perm>();
@@ -28,7 +32,7 @@ public class PermDao {
 				  results.add(perm);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByName");
 		} finally {
 			try {
 				data.disconnect();
@@ -54,7 +58,7 @@ public class PermDao {
 				  results.add(perm);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "getByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -70,7 +74,7 @@ public class PermDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("INSERT INTO perm (name_group, name_perm, state) VALUES ('" + group + "','" + perm + "'," + state + ")");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -85,7 +89,7 @@ public class PermDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("INSERT INTO perm (name_group, name_perm) VALUES ('" + group + "','" + perm + "')");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "create");
 		} finally {
 			try {
 				data.disconnect();
@@ -100,7 +104,7 @@ public class PermDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm WHERE name_perm = '" + perm + "' AND name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "delete");
 		} finally {
 			try {
 				data.disconnect();
@@ -115,7 +119,7 @@ public class PermDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm WHERE name_group = '" + group + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByGroup");
 		} finally {
 			try {
 				data.disconnect();
@@ -130,7 +134,7 @@ public class PermDao {
 			Statement stm = data.connect().createStatement();
 			stm.executeUpdate("DELETE FROM perm WHERE name_perm = '" + perm + "'");
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "deleteByPerm");
 		} finally {
 			try {
 				data.disconnect();
@@ -147,7 +151,7 @@ public class PermDao {
 			ResultSet rs = stm.executeQuery("Select * from perm where name_group = '" + group + "' AND name_perm = '" + perm + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error();
+			data.error(name() + "has");
 		} finally {
 			try {
 				data.disconnect();

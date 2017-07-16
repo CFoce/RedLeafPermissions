@@ -19,6 +19,12 @@ public class ListGroupCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		// TODO: EXECUTE LIST GROUP(S)
 		
 		return false;

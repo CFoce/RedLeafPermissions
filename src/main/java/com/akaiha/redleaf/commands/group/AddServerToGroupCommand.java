@@ -18,9 +18,15 @@ public class AddServerToGroupCommand implements BasicCommand
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args)
 	{
-		if (sender.hasPermission(getPermission()))
+		if (!sender.hasPermission(getPermission()))
 			return false;
 		
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		GroupDao dao = new GroupDao();
 		ServerDao sDao = new ServerDao();
 		if (dao.has(args[0]) && !sDao.has(args[0], args[1])) {

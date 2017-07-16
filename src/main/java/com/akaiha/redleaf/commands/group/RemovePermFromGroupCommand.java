@@ -17,9 +17,15 @@ public class RemovePermFromGroupCommand implements BasicCommand
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args)
 	{
-		if (sender.hasPermission(getPermission()))
+		if (!sender.hasPermission(getPermission()))
 			return false;
 
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	
+            }
+		});
 		PermDao pDao = new PermDao();
 		if (pDao.has(args[0], args[1])) {
 			pDao.delete(args[0], args[1]);

@@ -3,6 +3,7 @@ package com.akaiha.redleaf.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.config.Configs;
@@ -11,11 +12,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class Database {
 
-	private static String url;
-	private static Plugin plugin;
-	private Connection conn;
+	private volatile static String url;
+	private volatile static Plugin plugin;
+	private volatile Connection conn;
 
-	public static void setUrl(String url) {
+	public synchronized static void setUrl(String url) {
 		Database.url = url;
 	}
 	
@@ -29,11 +30,25 @@ public class Database {
 		conn.close();
 	}
 
-	public static void setPlugin(Plugin plugin) {
+	public synchronized static void setPlugin(Plugin plugin) {
 		Database.plugin = plugin;
 	}
 	
+	public void error(String message) {
+		plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	Database.plugin.getLogger().severe("Error: Database Query Issue: " + message);
+            }
+		}, 1, TimeUnit.MILLISECONDS);
+	}
+	
 	public void error() {
-		Database.plugin.getLogger().severe("Error: Database Query Issue.");
+		plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	Database.plugin.getLogger().severe("Error: Database Query Issue");
+            }
+		}, 1, TimeUnit.MILLISECONDS);
 	}
 }

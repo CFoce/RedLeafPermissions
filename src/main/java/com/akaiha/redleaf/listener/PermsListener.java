@@ -44,7 +44,6 @@ public class PermsListener implements Listener {
 		String uuid = player.getUniqueId().toString();
 		ServerInfo server = event.getServer().getInfo();
 		String serverName = server.getName();
-		plugin.getLogger().severe(serverName);
 		List<Perm> perms = new ArrayList<Perm>();
 		if(playerDao.has(uuid)) {
 			List<Player> groups = playerDao.getByUUID(uuid);
