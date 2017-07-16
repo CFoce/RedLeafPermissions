@@ -16,7 +16,7 @@ public class AddServerToGroupCommand implements BasicCommand
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] args)
+	public boolean onCommand(CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;
@@ -27,7 +27,7 @@ public class AddServerToGroupCommand implements BasicCommand
             	GroupDao dao = new GroupDao();
         		ServerDao sDao = new ServerDao();
         		if (dao.has(args[0]) && !sDao.has(args[0], args[1])) {
-        			if (args[2] != null && args[2].equalsIgnoreCase("true")) {
+        			if (args.length > 2 && args[2].equalsIgnoreCase("true")) {
         				sDao.create(args[0], args[1], true);
         			} else {
         				sDao.create(args[0], args[1]);

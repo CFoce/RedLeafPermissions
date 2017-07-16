@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,14 +13,12 @@ import com.akaiha.redleaf.entity.Perm;
 import com.akaiha.redleaf.entity.Player;
 import com.akaiha.redleaf.entity.Server;
 import com.akaiha.redleaf.entity.dao.ChildDao;
-import com.akaiha.redleaf.entity.dao.GroupDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -42,7 +38,7 @@ public class PermsListener implements Listener {
 	}
 	
 	@EventHandler
-	public void connected(ServerConnectedEvent event) {
+	public void connected(final ServerConnectedEvent event) {
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {

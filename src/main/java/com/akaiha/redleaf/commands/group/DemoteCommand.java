@@ -14,7 +14,7 @@ public class DemoteCommand implements BasicCommand
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] args)
+	public boolean onCommand(CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;

@@ -12,13 +12,14 @@ import net.md_5.bungee.api.CommandSender;
 public class AddPlayerToGroupCommand implements BasicCommand
 {
 	RedLeaf plugin;
+	
 	public AddPlayerToGroupCommand(RedLeaf plugin)
 	{
 		this.plugin = plugin;
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] args)
+	public boolean onCommand(CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;
