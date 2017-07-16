@@ -40,7 +40,7 @@ public class Database {
             public void run() {
             	Database.plugin.getLogger().severe("Error: Database Query Issue: " + message);
             }
-		}, 1, TimeUnit.MILLISECONDS);
+		}, 1L, TimeUnit.MILLISECONDS);
 	}
 	
 	public void error() {
@@ -49,6 +49,6 @@ public class Database {
             public void run() {
             	Database.plugin.getLogger().severe("Error: Database Query Issue");
             }
-		}, 1, TimeUnit.MILLISECONDS);
+		}, 1L, TimeUnit.MILLISECONDS);
 	}
 }

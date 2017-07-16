@@ -1,5 +1,7 @@
 package com.akaiha.redleaf.commands.group;
 
+import java.util.concurrent.TimeUnit;
+
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
 
@@ -22,10 +24,15 @@ public class ListGroupPlayerCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	//perform sql queries
+            	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                    	//send message back
+                    }
+        		}, 1L, TimeUnit.MILLISECONDS);
             }
 		});
-		// TODO: EXECUTE LIST PLAYER OF THE GROUP
 		
 		return true;
 	}

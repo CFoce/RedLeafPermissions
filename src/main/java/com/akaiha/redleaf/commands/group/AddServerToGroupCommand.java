@@ -24,18 +24,17 @@ public class AddServerToGroupCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	GroupDao dao = new GroupDao();
+        		ServerDao sDao = new ServerDao();
+        		if (dao.has(args[0]) && !sDao.has(args[0], args[1])) {
+        			if (args[2] != null && args[2].equalsIgnoreCase("true")) {
+        				sDao.create(args[0], args[1], true);
+        			} else {
+        				sDao.create(args[0], args[1]);
+        			}
+        		}
             }
 		});
-		GroupDao dao = new GroupDao();
-		ServerDao sDao = new ServerDao();
-		if (dao.has(args[0]) && !sDao.has(args[0], args[1])) {
-			if (args[2] != null && args[2].equalsIgnoreCase("true")) {
-				sDao.create(args[0], args[1], true);
-			} else {
-				sDao.create(args[0], args[1]);
-			}
-		}
 		
 		return true;
 	}

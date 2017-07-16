@@ -22,12 +22,9 @@ public class PromoteCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	// TODO: EXECUTE PROMOTE
             }
 		});
-		// <player> <group>
-		
-		// TODO: EXECUTE PROMOTE
 		
 		return false;
 	}
