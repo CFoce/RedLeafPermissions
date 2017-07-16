@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.akaiha.redleaf.entity.Child;
 import com.akaiha.redleaf.entity.Group;
@@ -14,6 +15,7 @@ import com.akaiha.redleaf.entity.Perm;
 import com.akaiha.redleaf.entity.Player;
 import com.akaiha.redleaf.entity.Server;
 import com.akaiha.redleaf.entity.dao.ChildDao;
+import com.akaiha.redleaf.entity.dao.GroupDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
@@ -33,6 +35,7 @@ public class PermsListener implements Listener {
 	private PermDao permDao = new PermDao();
 	private ServerDao serverDao = new ServerDao();
 	private Plugin plugin;
+	private volatile String permSet;
 	
 	public PermsListener(Plugin plugin) {
 		this.plugin = plugin;
@@ -40,55 +43,69 @@ public class PermsListener implements Listener {
 	
 	@EventHandler
 	public void connected(ServerConnectedEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		String uuid = player.getUniqueId().toString();
-		ServerInfo server = event.getServer().getInfo();
-		String serverName = server.getName();
-		List<Perm> perms = new ArrayList<Perm>();
-		if(playerDao.has(uuid)) {
-			List<Player> groups = playerDao.getByUUID(uuid);
-			List<Group> group = new ArrayList<Group>();
-			for (int i = 0; i < groups.size(); i++) {
-				Group g = new Group();
-				g.setName(groups.get(i).getName());
-				group.add(g);
-			}
-			perms.addAll(getAllPerms(serverName, group));
-		}
-		
-		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
-		for (int i = 0; i < defaults.size(); i++) {
-			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
-		}
-		
-		String permSet = uuid;
-		for (int i = 0; i < perms.size(); i++) {
-			if (perms.get(i).getBungee()) {
-				player.setPermission(perms.get(i).getPerm(), true);
-			} else {
-				permSet = permSet + "," + perms.get(i).getPerm();
-			}
-		}
-		
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(stream);
-        try {
-            out.writeUTF(permSet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        server.sendData("Perms", stream.toByteArray());
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	ProxiedPlayer player = event.getPlayer();
+        		String uuid = player.getUniqueId().toString();
+        		ServerInfo server = event.getServer().getInfo();
+        		String serverName = server.getName();
+        		List<Perm> perms = new ArrayList<Perm>();
+        		if(playerDao.has(uuid)) {
+        			List<Player> groups = playerDao.getByUUID(uuid);
+        			List<Group> group = new ArrayList<Group>();
+        			for (int i = 0; i < groups.size(); i++) {
+        				Group g = new Group();
+        				g.setName(groups.get(i).getName());
+        				group.add(g);
+        			}
+        			perms.addAll(getAllPerms(serverName, group));
+        		}
+        		
+        		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
+        		for (int i = 0; i < defaults.size(); i++) {
+        			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
+        		}
+            	
+            	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                    	permSet = uuid;
+                		for (int i = 0; i < perms.size(); i++) {
+                			if (perms.get(i).getBungee()) {
+                				player.setPermission(perms.get(i).getPerm(), true);
+                			} else {
+                				permSet = permSet + "," + perms.get(i).getPerm();
+                			}
+                		}
+                    	
+                		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                            	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                DataOutputStream out = new DataOutputStream(stream);
+                                try {
+                                    out.writeUTF(permSet);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                server.sendData("Perms", stream.toByteArray());
+                            }
+                		});
+                    }
+        		}, 1L, TimeUnit.MILLISECONDS);
+            }
+		});
 	}
 	
-	@EventHandler
+	/*@EventHandler
 	public void connecting(ServerConnectEvent event) {
-		/*ProxiedPlayer player = event.getPlayer();
+		ProxiedPlayer player = event.getPlayer();
 		Collection<String> perms = player.getPermissions();
 		for (Iterator<String> iterator = perms.iterator(); iterator.hasNext();) {
 	        player.setPermission(iterator.next(), false);
 	    }
-	    */
-	}
+	}*/
 	
 	private List<Perm> getAllPerms(String serverName, List<Group> groups) {
 		List<Perm> perms = new ArrayList<Perm>();
