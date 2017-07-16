@@ -1,7 +1,5 @@
 package com.akaiha.redleaf.commands.group;
 
-import java.util.Arrays;
-
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
 import com.akaiha.redleaf.entity.dao.GroupDao;
@@ -14,7 +12,6 @@ import net.md_5.bungee.api.CommandSender;
 public class AddPlayerToGroupCommand implements BasicCommand
 {
 	RedLeaf plugin;
-	private volatile String[] args;
 	
 	public AddPlayerToGroupCommand(RedLeaf plugin)
 	{
@@ -22,12 +19,11 @@ public class AddPlayerToGroupCommand implements BasicCommand
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arg)
+	public boolean onCommand(CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;
 		
-		this.args = Arrays.copyOf(arg,arg.length);
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {

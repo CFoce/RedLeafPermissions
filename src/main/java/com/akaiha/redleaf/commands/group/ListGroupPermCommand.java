@@ -16,7 +16,7 @@ public class ListGroupPermCommand implements BasicCommand
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] args)
+	public boolean onCommand(final CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;

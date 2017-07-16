@@ -34,7 +34,7 @@ public class Database {
 		Database.plugin = plugin;
 	}
 	
-	public void error(String message) {
+	public void error(final String message) {
 		plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override
             public void run() {

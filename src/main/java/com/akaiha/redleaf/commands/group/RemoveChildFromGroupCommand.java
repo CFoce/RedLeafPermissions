@@ -3,7 +3,6 @@ package com.akaiha.redleaf.commands.group;
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
 import com.akaiha.redleaf.entity.dao.ChildDao;
-import com.akaiha.redleaf.entity.dao.GroupDao;
 
 import net.md_5.bungee.api.CommandSender;
 
@@ -16,7 +15,7 @@ public class RemoveChildFromGroupCommand implements BasicCommand
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, String[] args)
+	public boolean onCommand(CommandSender sender, final String[] args)
 	{
 		if (!sender.hasPermission(getPermission()))
 			return false;
