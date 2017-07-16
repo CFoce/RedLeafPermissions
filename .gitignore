@@ -46,5 +46,12 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /.gradle/
+.gradle/
 /bin/
+bin/
 /build/
+build/
+
+# Eclipse settings
+/.settings/
+.settings/
