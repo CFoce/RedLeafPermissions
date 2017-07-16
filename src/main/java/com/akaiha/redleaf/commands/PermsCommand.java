@@ -9,7 +9,6 @@ import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.group.DemoteCommand;
 import com.akaiha.redleaf.commands.group.GroupCommand;
 import com.akaiha.redleaf.commands.group.PromoteCommand;
-import com.akaiha.redleaf.database.Database;
 import com.akaiha.redleaf.enums.RedLeafCommands;
 
 import net.md_5.bungee.api.CommandSender;
@@ -30,8 +29,8 @@ public class PermsCommand extends Command
 	private void loadCommands()
 	{
 		commands.put(RedLeafCommands.GROUP, new GroupCommand(plugin));
-		//commands.put(RedLeafCommands.GROUP, new PromoteCommand(plugin));
-		//commands.put(RedLeafCommands.GROUP, new DemoteCommand(plugin));
+		commands.put(RedLeafCommands.PROMOTE, new PromoteCommand(plugin));
+		commands.put(RedLeafCommands.DEMOTE, new DemoteCommand(plugin));
 	}
 
 	@Override
