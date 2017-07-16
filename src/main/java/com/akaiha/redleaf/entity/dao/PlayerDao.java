@@ -12,12 +12,33 @@ import com.akaiha.redleaf.entity.Player;
 public class PlayerDao {
 	
 	private Database data = new Database();
-	
-	private String name() {
-		return "PlayerDao ";
+
+	public List<Player> getPlayerListByName(String name){
+		List<Player> results = new ArrayList<Player>();
+		Player player;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from player where name_player like '" + name + "'");
+			while (rs.next()) {
+				  player = new Player();
+				  player.setGroupName(rs.getString("name_group"));
+				  player.setName(name);
+				  player.setUuid(rs.getString("uuid"));
+				  results.add(player);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error();
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
 	}
 	
-	public List<Player> getByUUID(String uuid){
+	public List<Player> getPlayerListByUUID(String uuid){
 		List<Player> results = new ArrayList<Player>();
 		Player player;
 		try {
@@ -31,7 +52,7 @@ public class PlayerDao {
 				  results.add(player);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "getByUUID");
+			data.error();
 		} finally {
 			try {
 				data.disconnect();
@@ -42,7 +63,7 @@ public class PlayerDao {
 		return results;
 	}
 	
-	public List<Player> getByGroup(String group){
+	public List<Player> getPlayerListByGroup(String group){
 		List<Player> results = new ArrayList<Player>();
 		Player player;
 		try {
@@ -56,7 +77,7 @@ public class PlayerDao {
 				  results.add(player);
 				}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "getByGroup");
+			data.error();
 		} finally {
 			try {
 				data.disconnect();
@@ -65,101 +86,5 @@ public class PlayerDao {
 			}
 		}
 		return results;
-	}
-	
-	public void create(String UUID, String name, String group) {
-		try {
-			Statement stm = data.connect().createStatement();
-			stm.executeUpdate("INSERT INTO player (name_player, name_group, uuid) VALUES ('" + name + "','" + group + "','" + UUID + "')");
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "create");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-	}
-	
-	public void delete(String UUID, String group) {
-		try {
-			Statement stm = data.connect().createStatement();
-			stm.executeUpdate("DELETE FROM player WHERE uuid = '" + UUID + "' AND name_group = '" + group + "'");
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "delete");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-	}
-	
-	public void deleteByGroup(String group) {
-		try {
-			Statement stm = data.connect().createStatement();
-			stm.executeUpdate("DELETE FROM player WHERE name_group = '" + group + "'");
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "deleteByGroup");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-	}
-	
-	public void deleteByUUID(String UUID) {
-		try {
-			Statement stm = data.connect().createStatement();
-			stm.executeUpdate("DELETE FROM player WHERE uuid = '" + UUID + "'");
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "deleteByUUID");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-	}
-	
-	public boolean has(String UUID, String group) {
-		boolean result = false;
-		try {
-			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("Select * from player where name_group = '" + group + "' AND uuid = '" + UUID + "'");
-			result = rs.first();
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "has");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-		return result;
-	}
-	
-	public boolean has(String UUID) {
-		boolean result = false;
-		try {
-			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("Select * from player where uuid = '" + UUID + "'");
-			result = rs.first();
-		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "has");
-		} finally {
-			try {
-				data.disconnect();
-			} catch (SQLException e) {
-				data.error();
-			}
-		}
-		return result;
 	}
 }

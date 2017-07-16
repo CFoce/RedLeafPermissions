@@ -2,7 +2,6 @@ package com.akaiha.redleaf.entity;
 
 public class Player {
 
-	private int id;
 	private String name;
 	private String uuid;
 	private String groupName;
@@ -29,13 +28,5 @@ public class Player {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 }
