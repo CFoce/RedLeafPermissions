@@ -24,13 +24,12 @@ public class RemoveChildFromGroupCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	ChildDao cDao = new ChildDao();
+        		if (cDao.has(args[0], args[1])) {
+        			cDao.delete(args[0], args[1]);
+        		}
             }
 		});
-		ChildDao cDao = new ChildDao();
-		if (cDao.has(args[0], args[1])) {
-			cDao.delete(args[0], args[1]);
-		}
 		
 		return true;
 	}

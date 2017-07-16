@@ -23,13 +23,12 @@ public class RemoveServerFromGroupCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	ServerDao sDao = new ServerDao();
+        		if (sDao.has(args[0], args[1])) {
+        			sDao.delete(args[0], args[1]);
+        		}
             }
-		});
-		ServerDao sDao = new ServerDao();
-		if (sDao.has(args[0], args[1])) {
-			sDao.delete(args[0], args[1]);
-		}
+		}); 
 		
 		return true;
 	}

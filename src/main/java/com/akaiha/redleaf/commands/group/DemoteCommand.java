@@ -22,12 +22,9 @@ public class DemoteCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	// TODO: EXECUTE DEMOTE
             }
 		});
-		// <player> <group>
-		
-		// TODO: EXECUTE DEMOTE
 		
 		return false;
 	}

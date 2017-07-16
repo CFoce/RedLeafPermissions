@@ -25,14 +25,13 @@ public class RemovePlayerFromGroupCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	
+            	PlayerDao pDao = new PlayerDao();
+        		Profile[] profile = new HttpProfileRepository("minecraft").findProfilesByNames(args[1]);
+        		if (pDao.has(profile[0].getId(), args[0])) {
+        			pDao.delete(profile[0].getId(),args[0]);
+        		}
             }
 		});
-		PlayerDao pDao = new PlayerDao();
-		Profile[] profile = new HttpProfileRepository("minecraft").findProfilesByNames(args[1]);
-		if (pDao.has(profile[0].getId(), args[0])) {
-			pDao.delete(profile[0].getId(),args[0]);
-		}
 		
 		return true;
 	}
