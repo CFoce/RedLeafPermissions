@@ -55,3 +55,6 @@ build/
 # Eclipse settings
 /.settings/
 .settings/
+.gradle/3.0/taskArtifacts/taskArtifacts.bin
+.gradle/3.0/taskArtifacts/fileSnapshotsToTreeSnapshotsIndex.bin
+.gradle/3.0/taskArtifacts/cache.properties.lock

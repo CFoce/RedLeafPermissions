@@ -10,6 +10,7 @@ import com.akaiha.redleaf.commands.BasicCommand;
 import com.akaiha.redleaf.enums.GroupCommands;
 
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class GroupCommand implements BasicCommand
 {
@@ -45,9 +46,10 @@ public class GroupCommand implements BasicCommand
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args)
 	{
-		if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help")))
+		if ((args.length > 0 && args[0].equalsIgnoreCase("help")))
 		{
-			// TODO: EXECUTE GROUP HELP HERE
+			if (sender.hasPermission(getPermission())) 
+				sender.sendMessage(new TextComponent("help command"));
 			return true;
 		}
 
@@ -63,8 +65,6 @@ public class GroupCommand implements BasicCommand
 				commands.get(subArg).onCommand(sender, args);
 				return true;
 			}
-
-			// TODO: SEND 'UNKNOWN COMMAND' MESSAGE
 		}
 		return false;
 	}
@@ -72,6 +72,6 @@ public class GroupCommand implements BasicCommand
 	@Override
 	public String getPermission()
 	{
-		return "redleaf.group";
+		return "redleaf.group.help";
 	}
 }
