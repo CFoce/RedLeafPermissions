@@ -50,12 +50,10 @@ public class PermsListener implements Listener {
 	private List<Perm> getAllPerms(String serverName, List<Group> groups) {
 		List<Perm> perms = new ArrayList<Perm>();
 		List<Child> child = new ArrayList<Child>();
-		plugin.getLogger().severe("" + groups.size());
 		for (int i = 0; i < groups.size(); i++) {
 			perms.addAll(permDao.getByGroup(groups.get(i).getName()));
 			child = childDao.getByGroup(groups.get(i).getName());
 			for (int j = 0; j < child.size(); j++) {
-				perms.addAll(permDao.getByGroup(child.get(j).getChildName()));
 				List<Group> group = new ArrayList<Group>();
 				Group g = new Group();
 				g.setName(child.get(j).getChildName());
@@ -72,7 +70,11 @@ public class PermsListener implements Listener {
 			if (perms.get(i).getBungee()) {
 				player.setPermission(perms.get(i).getPerm(), true);
 			} else {
-				set.put(uuid, set.get(uuid) + "," + perms.get(i).getPerm());
+				if (!set.containsKey(uuid)) {
+					set.put(uuid, perms.get(i).getPerm());
+				} else {
+					set.put(uuid, set.get(uuid) + "," + perms.get(i).getPerm());
+				}
 			}
 		}
 	}
@@ -81,11 +83,15 @@ public class PermsListener implements Listener {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(stream);
         try {
-            out.writeUTF(permSetDefaults.get(uuid));
+        	out.writeUTF("perms");
+        	if (set.containsKey(uuid)) {
+        		out.writeUTF(set.get(uuid));
+        		server.sendData("Return", stream.toByteArray());
+        		set.remove(uuid);
+        	}
         } catch (IOException e) {
             e.printStackTrace();
         }
-        server.sendData("Perms", stream.toByteArray());
 	}
 	
 	private void getDefaults(final ServerConnectedEvent event) {
@@ -94,7 +100,6 @@ public class PermsListener implements Listener {
             public void run() {
             	ProxiedPlayer player = event.getPlayer();
         		String uuid = player.getUniqueId().toString().replaceAll("-", "");
-        		permSetDefaults.put(uuid, uuid);
         		ServerInfo server = event.getServer().getInfo();
         		String serverName = server.getName();
         		List<Perm> perms = new ArrayList<Perm>();
@@ -127,7 +132,6 @@ public class PermsListener implements Listener {
             public void run() {
             	ProxiedPlayer player = event.getPlayer();
         		String uuid = player.getUniqueId().toString().replaceAll("-", "");
-        		permSet.put(uuid, uuid);
         		ServerInfo server = event.getServer().getInfo();
         		String serverName = server.getName();
         		List<Perm> perms = new ArrayList<Perm>();
