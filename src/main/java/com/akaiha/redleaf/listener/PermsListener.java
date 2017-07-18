@@ -19,7 +19,6 @@ import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
 
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -34,15 +33,17 @@ public class PermsListener implements Listener {
 	private PermDao permDao = new PermDao();
 	private ServerDao serverDao = new ServerDao();
 	private Plugin plugin;
-	private Map<String,String> permSet = new ConcurrentHashMap<String,String>();
-	private Map<String,String> permSetDefaults = new ConcurrentHashMap<String,String>();
+	private volatile Map<String,String> permSet = new ConcurrentHashMap<String,String>();
+	private volatile Map<String,String> permSetDefaults = new ConcurrentHashMap<String,String>();
+	private volatile Map<String,String> groupSet = new ConcurrentHashMap<String,String>();
+	
 	
 	public PermsListener(Plugin plugin) {
 		this.plugin = plugin;
 	}
 	
 	@EventHandler
-	public void connected(final ServerConnectedEvent event) {
+	public void connected(ServerConnectedEvent event) {
 		getDefaults(event);
 		getNonDefaults(event);
 	}
@@ -79,12 +80,13 @@ public class PermsListener implements Listener {
 		}
 	}
 	
-	private void sendPerms(String uuid, ServerInfo server, Map<String,String> set) {
+	private void sendPerms(String channel, String uuid, ServerInfo server, Map<String,String> set) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(stream);
         try {
-        	out.writeUTF("perms");
+        	out.writeUTF(channel);
         	if (set.containsKey(uuid)) {
+        		out.writeUTF(uuid);
         		out.writeUTF(set.get(uuid));
         		server.sendData("Return", stream.toByteArray());
         		set.remove(uuid);
@@ -117,7 +119,7 @@ public class PermsListener implements Listener {
                 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
                             @Override
                             public void run() {
-                            	sendPerms(uuid,server,permSetDefaults);
+                            	sendPerms("perms",uuid,server,permSetDefaults);
                             }
                 		});
                     }
@@ -141,6 +143,11 @@ public class PermsListener implements Listener {
         			for (int i = 0; i < groups.size(); i++) {
         				Group g = new Group();
         				g.setName(groups.get(i).getGroupName());
+        				if (!groupSet.containsKey(uuid)) {
+        					groupSet.put(uuid, groups.get(i).getGroupName());
+        				} else {
+        					groupSet.put(uuid, groupSet.get(uuid) + "," + groups.get(i).getGroupName());
+        				}
         				group.add(g);
         			}
         			perms.addAll(getAllPerms(serverName, group));
@@ -153,7 +160,8 @@ public class PermsListener implements Listener {
                 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
                             @Override
                             public void run() {
-                            	sendPerms(uuid,server,permSet);
+                            	sendPerms("perms",uuid,server,permSet);
+                            	sendPerms("groups",uuid,server,groupSet);
                             }
                 		});
                     }
