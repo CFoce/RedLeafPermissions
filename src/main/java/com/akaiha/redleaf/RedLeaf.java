@@ -37,6 +37,6 @@ public class RedLeaf extends Plugin
 	}
 	
 	private void registerChannels() {
-		getProxy().registerChannel("Perms");
+		getProxy().registerChannel("Return");
 	}
 }
