@@ -3,6 +3,7 @@ package com.akaiha.redleaf.entity;
 public class Group {
 	
 	private String name;
+	private String prefix;
 
 	public String getName() {
 		return name;
@@ -10,5 +11,13 @@ public class Group {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

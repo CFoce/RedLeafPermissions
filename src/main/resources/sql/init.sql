@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS perm_group(
 name_group VARCHAR(256) NOT NULL,
+prefix VARCHAR(256),
 PRIMARY KEY ( name_group )
 );
 
