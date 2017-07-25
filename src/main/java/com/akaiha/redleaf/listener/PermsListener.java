@@ -15,6 +15,7 @@ import com.akaiha.redleaf.entity.Perm;
 import com.akaiha.redleaf.entity.Player;
 import com.akaiha.redleaf.entity.Server;
 import com.akaiha.redleaf.entity.dao.ChildDao;
+import com.akaiha.redleaf.entity.dao.GroupDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
@@ -52,14 +53,16 @@ public class PermsListener implements Listener {
 		List<Perm> perms = new ArrayList<Perm>();
 		List<Child> child = new ArrayList<Child>();
 		for (int i = 0; i < groups.size(); i++) {
-			perms.addAll(permDao.getByGroup(groups.get(i).getName()));
-			child = childDao.getByGroup(groups.get(i).getName());
-			for (int j = 0; j < child.size(); j++) {
-				List<Group> group = new ArrayList<Group>();
-				Group g = new Group();
-				g.setName(child.get(j).getChildName());
-				group.add(g);
-				perms.addAll(getAllPerms(serverName, group));
+			if (serverDao.has(groups.get(i).getName(), serverName)) {
+				perms.addAll(permDao.getByGroup(groups.get(i).getName()));
+				child = childDao.getByGroup(groups.get(i).getName());
+				for (int j = 0; j < child.size(); j++) {
+					List<Group> group = new ArrayList<Group>();
+					Group g = new Group();
+					g.setName(child.get(j).getChildName());
+					group.add(g);
+					perms.addAll(getAllPerms(serverName, group));
+				}
 			}
 		}
 		
@@ -101,7 +104,7 @@ public class PermsListener implements Listener {
             @Override
             public void run() {
             	ProxiedPlayer player = event.getPlayer();
-        		String uuid = player.getUniqueId().toString().replaceAll("-", "");
+        		String uuid = player.getUniqueId().toString();
         		ServerInfo server = event.getServer().getInfo();
         		String serverName = server.getName();
         		List<Perm> perms = new ArrayList<Perm>();
@@ -133,22 +136,24 @@ public class PermsListener implements Listener {
             @Override
             public void run() {
             	ProxiedPlayer player = event.getPlayer();
-        		String uuid = player.getUniqueId().toString().replaceAll("-", "");
+        		String uuid = player.getUniqueId().toString();
         		ServerInfo server = event.getServer().getInfo();
         		String serverName = server.getName();
         		List<Perm> perms = new ArrayList<Perm>();
         		if(playerDao.has(uuid)) {
+        			groupSet.put(uuid, "");
         			List<Player> groups = playerDao.getByUUID(uuid);
         			List<Group> group = new ArrayList<Group>();
         			for (int i = 0; i < groups.size(); i++) {
-        				Group g = new Group();
-        				g.setName(groups.get(i).getGroupName());
-        				if (!groupSet.containsKey(uuid)) {
-        					groupSet.put(uuid, groups.get(i).getGroupName());
-        				} else {
-        					groupSet.put(uuid, groupSet.get(uuid) + "," + groups.get(i).getGroupName());
+        				if (serverDao.has(groups.get(i).getGroupName(), serverName)) {
+        					GroupDao dao = new GroupDao();
+            				Group g = dao.get(groups.get(i).getGroupName());
+            				String prefix = g.getPrefix();
+            				if (prefix != null) {
+            					groupSet.put(uuid, groupSet.get(uuid) + prefix);
+            				}
+            				group.add(g);
         				}
-        				group.add(g);
         			}
         			perms.addAll(getAllPerms(serverName, group));
             	
@@ -161,7 +166,9 @@ public class PermsListener implements Listener {
                             @Override
                             public void run() {
                             	sendPerms("perms",uuid,server,permSet);
-                            	sendPerms("groups",uuid,server,groupSet);
+                            	if (groupSet.get(uuid) != "") {
+                            		sendPerms("groups",uuid,server,groupSet);
+                            	}
                             }
                 		});
                     }

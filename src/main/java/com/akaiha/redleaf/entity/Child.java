@@ -2,6 +2,7 @@ package com.akaiha.redleaf.entity;
 
 public class Child {
 	
+	//@Column()
 	private int id;
 	private String groupName;
 	private String childName;

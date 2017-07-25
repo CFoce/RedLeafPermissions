@@ -21,7 +21,7 @@ public class GroupDao {
 		boolean result = false;
 		try {
 			Statement stm = data.connect().createStatement();
-			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
+			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group = '" + name + "'");
 			result = rs.first();
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error(name() + "has");
@@ -33,6 +33,27 @@ public class GroupDao {
 			}
 		}
 		return result;
+	}
+	
+	public Group get(String name) {
+		Group g = new Group();
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
+			while (rs.next()) {
+				  g.setName(name);
+				  g.setPrefix(rs.getString("prefix"));
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error(name() + "has");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return g;
 	}
 	
 	public void create(String name) {
