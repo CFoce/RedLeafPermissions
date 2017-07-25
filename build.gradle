@@ -14,5 +14,4 @@ repositories {
 
 dependencies {
     compile (group: 'net.md-5', name: 'bungeecord-api', version: bungeeVersion)
-    compile group: 'javax.persistence', name: 'persistence-api', version: '1.0.2'
 }
