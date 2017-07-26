@@ -40,8 +40,10 @@ public class GroupDao {
 		try {
 			Statement stm = data.connect().createStatement();
 			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
-			g.setName(name);
-			g.setPrefix(rs.getString("prefix"));
+			while (rs.next()) {
+				g.setName(name);
+				g.setPrefix(rs.getString("prefix"));
+			}
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error(name() + "get");
 		} finally {

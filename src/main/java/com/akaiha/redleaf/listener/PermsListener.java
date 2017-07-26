@@ -144,7 +144,12 @@ public class PermsListener implements Listener {
         			groupSet.put(uuid, "");
         			List<Player> groups = playerDao.getByUUID(uuid);
         			if (groups.get(0).getName() != player.getName()) {
-        				//playerDao.changeName(uuid, player.getName());
+        				plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+        		            @Override
+        		            public void run() {
+        		            	playerDao.changeName(uuid, player.getName());
+        		            }
+        				});
         			}
         			List<Group> group = new ArrayList<Group>();
         			for (int i = 0; i < groups.size(); i++) {

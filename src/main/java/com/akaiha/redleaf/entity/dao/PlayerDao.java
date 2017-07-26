@@ -166,7 +166,7 @@ public class PlayerDao {
 	public void changeName(String UUID, String name) {
 		try {
 			Statement stm = data.connect().createStatement();
-			stm.executeUpdate("UPDATE player SET name_player = " + name + " WHERE uuid = '" + UUID + "'");
+			stm.executeUpdate("UPDATE player SET name_player = '" + name + "' WHERE uuid = '" + UUID + "'");
 		} catch (ClassNotFoundException | SQLException e) {
 			data.error(name() + "changeName");
 		} finally {
