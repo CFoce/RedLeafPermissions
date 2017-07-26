@@ -215,14 +215,17 @@ public class ServerDao {
 	}
 	
 	public void changeState(String group, String name, boolean state) {
-		
-	}
-	
-	public void changeStateByGroup(String group, boolean state) {
-		
-	}
-
-	public void changeStateByServer(String name, boolean state) {
-		
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeUpdate("UPDATE perm_server SET state = " + state + " WHERE name_group = '" + group + "' AND name_server = '" + name + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error(name() + "changeState");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
 	}
 }
