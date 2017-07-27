@@ -45,8 +45,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-/.gradle/
-.gradle/
 /bin/
 bin/
 /build/
@@ -55,6 +53,14 @@ build/
 # Eclipse settings
 /.settings/
 .settings/
-.gradle/3.0/taskArtifacts/taskArtifacts.bin
-.gradle/3.0/taskArtifacts/fileSnapshotsToTreeSnapshotsIndex.bin
+/.gradle/
+.gradle/
 .gradle/3.0/taskArtifacts/cache.properties.lock
+.gradle/3.0/taskArtifacts/cache.properties.lock
+.gradle/3.0/taskArtifacts/cache.properties.lock
+.gradle/3.0/taskArtifacts/fileHashes.bin
+.gradle/3.0/taskArtifacts/fileSnapshots.bin
+.gradle/3.0/taskArtifacts/fileSnapshotsToTreeSnapshotsIndex.bin
+.gradle/3.0/taskArtifacts/taskArtifacts.bin
+*.lock
+*.bin

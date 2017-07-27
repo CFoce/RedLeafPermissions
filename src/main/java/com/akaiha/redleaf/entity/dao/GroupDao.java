@@ -41,11 +41,11 @@ public class GroupDao {
 			Statement stm = data.connect().createStatement();
 			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group WHERE name_group LIKE '" + name + "'");
 			while (rs.next()) {
-				  g.setName(name);
-				  g.setPrefix(rs.getString("prefix"));
-				}
+				g.setName(name);
+				g.setPrefix(rs.getString("prefix"));
+			}
 		} catch (ClassNotFoundException | SQLException e) {
-			data.error(name() + "has");
+			data.error(name() + "get");
 		} finally {
 			try {
 				data.disconnect();
@@ -73,6 +73,40 @@ public class GroupDao {
 		}
 	}
 	
+	public void createWithPrefix(String name, String prefix) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeUpdate("INSERT INTO perm_group (name_group,prefix) VALUES ('" + name + "','" + prefix+ "')");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			data.error(name() + "createWithPrefix");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				data.error();
+			}
+		}
+	}
+	
+	public void addPrefix(String name, String prefix) {
+		try {
+			Statement stm = data.connect().createStatement();
+			stm.executeUpdate("UPDATE perm_group SET prefix = '" + prefix + "' WHERE name_group LIKE '" + name + "'");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			data.error(name() + "createWithPrefix");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				data.error();
+			}
+		}
+	}
+	
 	public void delete(String name) {
 		try {
 			Statement stm = data.connect().createStatement();
@@ -89,6 +123,25 @@ public class GroupDao {
 	}
 	
 	public List<Group> getAll() {
-		return new ArrayList<Group>();
+		List<Group> list = new ArrayList<Group>();
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("SELECT * FROM perm_group");
+			while (rs.next()) {
+				Group g = new Group();
+				g.setName(rs.getString("name_group"));
+				g.setPrefix(rs.getString("prefix"));
+				list.add(g);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error(name() + "getAll");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return list;
 	}
 }

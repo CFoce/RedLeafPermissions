@@ -1,11 +1,15 @@
 package com.akaiha.redleaf.commands.group;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.akaiha.redleaf.RedLeaf;
 import com.akaiha.redleaf.commands.BasicCommand;
+import com.akaiha.redleaf.entity.Group;
+import com.akaiha.redleaf.entity.dao.GroupDao;
 
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class ListGroupCommand implements BasicCommand
 {
@@ -24,11 +28,20 @@ public class ListGroupCommand implements BasicCommand
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	//perform sql queries
+            	GroupDao dao = new GroupDao();
+                List<Group> list = dao.getAll();
             	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
                     @Override
                     public void run() {
-                    	//send message back
+                    	String output = "Groups:";
+                    	for(int i = 0; i < list.size(); i++) {
+                    		if (i != list.size() - 1) {
+                    			output += " " + list.get(i).getName() + " " + list.get(i).getPrefix() + ",";
+                    		} else {
+                    			output += " " + list.get(i).getName() + " " + list.get(i).getPrefix();
+                    		}
+                    	}
+                    	sender.sendMessage(new TextComponent(output));
                     }
         		}, 1L, TimeUnit.MILLISECONDS);
             }
