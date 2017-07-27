@@ -19,6 +19,10 @@ import com.akaiha.redleaf.entity.dao.GroupDao;
 import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
 import com.akaiha.redleaf.entity.dao.ServerDao;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -34,10 +38,6 @@ public class PermsListener implements Listener {
 	private PermDao permDao = new PermDao();
 	private ServerDao serverDao = new ServerDao();
 	private Plugin plugin;
-	private volatile Map<String,String> permSet = new ConcurrentHashMap<String,String>();
-	private volatile Map<String,String> permSetDefaults = new ConcurrentHashMap<String,String>();
-	private volatile Map<String,String> groupSet = new ConcurrentHashMap<String,String>();
-	
 	
 	public PermsListener(Plugin plugin) {
 		this.plugin = plugin;
@@ -45,7 +45,6 @@ public class PermsListener implements Listener {
 	
 	@EventHandler
 	public void connected(ServerConnectedEvent event) {
-		getDefaults(event);
 		getNonDefaults(event);
 	}
 	
@@ -65,70 +64,46 @@ public class PermsListener implements Listener {
 				}
 			}
 		}
-		
 		return perms;
 	}
 	
-	private void processPerms(ProxiedPlayer player, String uuid, List<Perm> perms, Map<String,String> set) {
+	private String[][] processPerms(ProxiedPlayer player, String uuid, List<Perm> perms) {
+		List<String> addperms = new ArrayList<String>();
+		List<String> antiperms = new ArrayList<String>();
 		for (int i = 0; i < perms.size(); i++) {
 			if (perms.get(i).getBungee()) {
 				player.setPermission(perms.get(i).getPerm(), true);
 			} else {
-				if (!set.containsKey(uuid)) {
-					set.put(uuid, perms.get(i).getPerm());
+				String temp = perms.get(i).getPerm();
+				if (temp.contains("-")) {
+					temp = temp.replace("-", "");
+					if (!addperms.contains(temp)) {
+						antiperms.add(temp);
+					}
 				} else {
-					set.put(uuid, set.get(uuid) + "," + perms.get(i).getPerm());
+					if (antiperms.contains(temp)) {
+						antiperms.remove(temp);
+					}
+					addperms.add(temp);
 				}
 			}
 		}
+		String[][] array = new String[2][];
+		array[0] = addperms.toArray(new String[addperms.size()]);
+		array[1] = antiperms.toArray(new String[antiperms.size()]);
+		return array;
 	}
 	
-	private void sendPerms(String channel, String uuid, ServerInfo server, Map<String,String> set) {
+	private void sendPerms(String channel, ServerInfo server, JsonObject jObj) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(stream);
         try {
         	out.writeUTF(channel);
-        	if (set.containsKey(uuid)) {
-        		out.writeUTF(uuid);
-        		out.writeUTF(set.get(uuid));
-        		server.sendData("Return", stream.toByteArray());
-        		set.remove(uuid);
-        	}
+        	out.writeUTF(new Gson().toJson(jObj));
+    		server.sendData("Return", stream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-	
-	private void getDefaults(final ServerConnectedEvent event) {
-		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-            	ProxiedPlayer player = event.getPlayer();
-        		String uuid = player.getUniqueId().toString();
-        		ServerInfo server = event.getServer().getInfo();
-        		String serverName = server.getName();
-        		List<Perm> perms = new ArrayList<Perm>();
-        		
-        		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
-        		for (int i = 0; i < defaults.size(); i++) {
-        			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
-        		}
-            	
-            	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                    	processPerms(player,uuid,perms,permSetDefaults);
-                    	
-                		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                            	sendPerms("perms",uuid,server,permSetDefaults);
-                            }
-                		});
-                    }
-        		}, 1L, TimeUnit.MILLISECONDS);
-            }
-		});
 	}
 	
 	private void getNonDefaults(final ServerConnectedEvent event) {
@@ -140,8 +115,16 @@ public class PermsListener implements Listener {
         		ServerInfo server = event.getServer().getInfo();
         		String serverName = server.getName();
         		List<Perm> perms = new ArrayList<Perm>();
+        		
+        		JsonObject jObj = new JsonObject();
+        		jObj.addProperty("uuid", uuid);
+        		
+        		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
+        		for (int i = 0; i < defaults.size(); i++) {
+        			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
+        		}
+        		
         		if(playerDao.has(uuid)) {
-        			groupSet.put(uuid, "");
         			List<Player> groups = playerDao.getByUUID(uuid);
         			if (groups.get(0).getName() != player.getName()) {
         				plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
@@ -152,36 +135,50 @@ public class PermsListener implements Listener {
         				});
         			}
         			List<Group> group = new ArrayList<Group>();
+        			String prefixs = null;
         			for (int i = 0; i < groups.size(); i++) {
         				if (serverDao.has(groups.get(i).getGroupName(), serverName)) {
         					GroupDao dao = new GroupDao();
             				Group g = dao.get(groups.get(i).getGroupName());
             				String prefix = g.getPrefix();
             				if (prefix != null) {
-            					groupSet.put(uuid, groupSet.get(uuid) + prefix);
+            					if (prefixs == null) {
+            						prefixs = "";
+            					}
+            					prefixs+= prefix;
             				}
             				group.add(g);
         				}
         			}
+        			jObj.addProperty("groups", prefixs);
         			perms.addAll(getAllPerms(serverName, group));
-            	
+        		}
+        		
             	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
                     @Override
                     public void run() {
-                    	processPerms(player,uuid,perms,permSet);
+                    	String[][] arrayPerms = processPerms(player,uuid,perms);
+                    	
+                    	JsonArray addperms = new JsonArray();
+                        for(String entry : arrayPerms[0]) {
+                            addperms.add(entry);
+                        }
+                    	jObj.add("perms", addperms);
+                    	
+                    	JsonArray antiperms = new JsonArray();
+                        for(String entry : arrayPerms[1]) {
+                        	antiperms.add(entry);
+                        }
+                    	jObj.add("antiperms", antiperms);
                     	
                 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
                             @Override
                             public void run() {
-                            	sendPerms("perms",uuid,server,permSet);
-                            	if (groupSet.get(uuid) != "") {
-                            		sendPerms("groups",uuid,server,groupSet);
-                            	}
+                            	sendPerms("perms",server,jObj);
                             }
                 		});
                     }
         		}, 1L, TimeUnit.MILLISECONDS);
-        		}
             }
 		});
 	}

@@ -51,7 +51,9 @@ public class DatabaseConfig {
 	           conn = DriverManager.getConnection(url,(String) RedLeaf.config.getConfig(Configs.USER),(String) RedLeaf.config.getConfig(Configs.PASSWORD));
 	           try {
 	        	   stm = conn.createStatement();
-		           stm.executeUpdate("CREATE DATABASE " + (String) RedLeaf.config.getConfig(Configs.DATABASE)); 
+	        	   if (!(boolean) RedLeaf.config.getConfig(Configs.INIT)) {
+	        		   stm.executeUpdate("CREATE DATABASE " + (String) RedLeaf.config.getConfig(Configs.DATABASE)); 
+	        	   }
 	           } catch (Exception e) {
 	        	   plugin.getLogger().warning("Warn: Database Creation Issue.");
 	           } finally {
