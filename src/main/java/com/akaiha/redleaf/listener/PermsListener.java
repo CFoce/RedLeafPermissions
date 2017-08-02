@@ -140,7 +140,11 @@ public class PermsListener implements Listener {
 				GroupMemory gMem = plugin.sGroups.get(group);
 				if (gMem.getServers().contains(serverName)) {
 					if (gMem.getPrefix() != null) {
-						prefixs += gMem.getPrefix();
+						if (prefixs == null) {
+							prefixs = gMem.getPrefix();
+						} else {
+							prefixs += gMem.getPrefix();
+						}
 					}
 					processGroups(player, gMem, antiperms, antiperms);
 					for (String temp : gMem.getChildren()) {
