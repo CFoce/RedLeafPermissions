@@ -5,93 +5,94 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
-import com.akaiha.redleaf.entity.Child;
-import com.akaiha.redleaf.entity.Group;
-import com.akaiha.redleaf.entity.Perm;
+import com.akaiha.redleaf.RedLeaf;
+import com.akaiha.redleaf.entity.GroupMemory;
 import com.akaiha.redleaf.entity.Player;
-import com.akaiha.redleaf.entity.Server;
-import com.akaiha.redleaf.entity.dao.ChildDao;
-import com.akaiha.redleaf.entity.dao.GroupDao;
-import com.akaiha.redleaf.entity.dao.PermDao;
 import com.akaiha.redleaf.entity.dao.PlayerDao;
-import com.akaiha.redleaf.entity.dao.ServerDao;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
 public class PermsListener implements Listener {
 
-	private PlayerDao playerDao = new PlayerDao();
-	private ChildDao childDao = new ChildDao();
-	private PermDao permDao = new PermDao();
-	private ServerDao serverDao = new ServerDao();
-	private Plugin plugin;
+	private RedLeaf plugin;
+	private ConcurrentHashMap<String, List<String>> playerGroups = new ConcurrentHashMap<String, List<String>>();
+	private ConcurrentHashMap<String, Object> playerLocks = new ConcurrentHashMap<String, Object>();
 	
-	public PermsListener(Plugin plugin) {
+	public PermsListener(RedLeaf plugin) {
 		this.plugin = plugin;
 	}
 	
 	@EventHandler
-	public void connected(ServerConnectedEvent event) {
-		getNonDefaults(event);
-	}
-	
-	private List<Perm> getAllPerms(String serverName, List<Group> groups) {
-		List<Perm> perms = new ArrayList<Perm>();
-		List<Child> child = new ArrayList<Child>();
-		for (int i = 0; i < groups.size(); i++) {
-			if (serverDao.has(groups.get(i).getName(), serverName)) {
-				perms.addAll(permDao.getByGroup(groups.get(i).getName()));
-				child = childDao.getByGroup(groups.get(i).getName());
-				for (int j = 0; j < child.size(); j++) {
-					List<Group> group = new ArrayList<Group>();
-					Group g = new Group();
-					g.setName(child.get(j).getChildName());
-					group.add(g);
-					perms.addAll(getAllPerms(serverName, group));
-				}
-			}
+	public void bungeeConnect(PostLoginEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		String uuid = event.getPlayer().getUniqueId().toString();
+		PlayerDao playerDao = new PlayerDao();
+		if(playerDao.has(uuid)) {
+			playerLocks.put(uuid, new Object());
+			plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+	            @Override
+	            public void run() {
+	            	List<Player> groups = playerDao.getByUUID(uuid);
+	    			List<String> list = new ArrayList<String>();
+	    			for (Player p : groups) {
+	    				list.add(p.getGroupName());
+	    			}
+	    			playerGroups.put(uuid, list);
+	    			synchronized (playerLocks.get(uuid)) {
+	    				playerLocks.get(uuid).notify();
+	    			}
+	    			playerLocks.remove(uuid);
+	    			if (groups.get(0).getName() != player.getName()) {
+	    				plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+	    		            @Override
+	    		            public void run() {
+	    		            	playerDao.changeName(uuid, player.getName());
+	    		            }
+	    				});
+	    			}
+	            }
+			});
 		}
-		return perms;
 	}
 	
-	private String[][] processPerms(ProxiedPlayer player, String uuid, List<Perm> perms) {
-		List<String> addperms = new ArrayList<String>();
-		List<String> antiperms = new ArrayList<String>();
+	@EventHandler
+	public void bungeeDisConnect(PlayerDisconnectEvent event) {
+		String uuid = event.getPlayer().getUniqueId().toString();
+		if (playerGroups.containsKey(uuid)) {
+			playerGroups.remove(uuid);
+		}
+	}
+	
+	@EventHandler
+	public void serverConnect(ServerConnectEvent event) {
+		getJObj(event);
+	}
+	
+	private void processBungeePerms(ProxiedPlayer player, List<String> perms) {
 		for (int i = 0; i < perms.size(); i++) {
-			if (perms.get(i).getBungee()) {
-				player.setPermission(perms.get(i).getPerm(), true);
-			} else {
-				String temp = perms.get(i).getPerm();
-				if (temp.contains("-")) {
-					temp = temp.replace("-", "");
-					if (!addperms.contains(temp)) {
-						antiperms.add(temp);
-					}
-				} else {
-					if (antiperms.contains(temp)) {
-						antiperms.remove(temp);
-					}
-					addperms.add(temp);
-				}
-			}
+				player.setPermission(perms.get(i), true);
 		}
-		String[][] array = new String[2][];
-		array[0] = addperms.toArray(new String[addperms.size()]);
-		array[1] = antiperms.toArray(new String[antiperms.size()]);
-		return array;
+	}
+	
+	private void processGroups(ProxiedPlayer player, GroupMemory gMem, JsonArray addperms, JsonArray antiperms) {
+		for (String temp : gMem.getPerms()) {
+			addperms.add(temp);
+		}
+        for (String temp : gMem.getAntiperms()) {
+        	antiperms.add(temp);
+        }
+        processBungeePerms(player, gMem.getBungee());
 	}
 	
 	private void sendPerms(String channel, ServerInfo server, JsonObject jObj) {
@@ -106,80 +107,59 @@ public class PermsListener implements Listener {
         }
 	}
 	
-	private void getNonDefaults(final ServerConnectedEvent event) {
-		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-            	ProxiedPlayer player = event.getPlayer();
-        		String uuid = player.getUniqueId().toString();
-        		ServerInfo server = event.getServer().getInfo();
-        		String serverName = server.getName();
-        		List<Perm> perms = new ArrayList<Perm>();
-        		
-        		JsonObject jObj = new JsonObject();
-        		jObj.addProperty("uuid", uuid);
-        		
-        		List<Server> defaults = serverDao.getDefaultsByServer(serverName);
-        		for (int i = 0; i < defaults.size(); i++) {
-        			perms.addAll(permDao.getByGroup(defaults.get(i).getGroupName()));
-        		}
-        		
-        		if(playerDao.has(uuid)) {
-        			List<Player> groups = playerDao.getByUUID(uuid);
-        			if (groups.get(0).getName() != player.getName()) {
-        				plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-        		            @Override
-        		            public void run() {
-        		            	playerDao.changeName(uuid, player.getName());
-        		            }
-        				});
-        			}
-        			List<Group> group = new ArrayList<Group>();
-        			String prefixs = null;
-        			for (int i = 0; i < groups.size(); i++) {
-        				if (serverDao.has(groups.get(i).getGroupName(), serverName)) {
-        					GroupDao dao = new GroupDao();
-            				Group g = dao.get(groups.get(i).getGroupName());
-            				String prefix = g.getPrefix();
-            				if (prefix != null) {
-            					if (prefixs == null) {
-            						prefixs = "";
-            					}
-            					prefixs+= prefix;
-            				}
-            				group.add(g);
-        				}
-        			}
-        			jObj.addProperty("groups", prefixs);
-        			perms.addAll(getAllPerms(serverName, group));
-        		}
-        		
-            	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                    	String[][] arrayPerms = processPerms(player,uuid,perms);
-                    	
-                    	JsonArray addperms = new JsonArray();
-                        for(String entry : arrayPerms[0]) {
-                            addperms.add(entry);
-                        }
-                    	jObj.add("perms", addperms);
-                    	
-                    	JsonArray antiperms = new JsonArray();
-                        for(String entry : arrayPerms[1]) {
-                        	antiperms.add(entry);
-                        }
-                    	jObj.add("antiperms", antiperms);
-                    	
-                		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                            	sendPerms("perms",server,jObj);
-                            }
-                		});
-                    }
-        		}, 1L, TimeUnit.MILLISECONDS);
-            }
-		});
+	private void getJObj(final ServerConnectEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		String uuid = player.getUniqueId().toString();
+		ServerInfo server = event.getTarget();
+		String serverName = server.getName();
+		
+		JsonObject jObj = new JsonObject();
+		jObj.addProperty("uuid", uuid);
+		
+		GroupMemory dMem = plugin.sDefaults.get(serverName);
+		JsonArray addperms = new JsonArray();
+    	JsonArray antiperms = new JsonArray();
+		for (String temp : dMem.getPerms()) {
+			addperms.add(temp);
+		}
+        for (String temp : dMem.getAntiperms()) {
+        	antiperms.add(temp);
+        }
+        processBungeePerms(player, dMem.getBungee());
+		
+		if(playerLocks.containsKey(uuid)) {
+			while (playerLocks.containsKey(uuid)) {
+				try {
+					synchronized (playerLocks.get(uuid)) {
+						playerLocks.get(uuid).wait();
+					}
+				} catch (InterruptedException e) {}
+			}
+			String prefixs = null;
+			for (String group : playerGroups.get(uuid)) {
+				GroupMemory gMem = plugin.sGroups.get(group);
+				if (gMem.getServers().contains(serverName)) {
+					if (gMem.getPrefix() != null) {
+						prefixs += gMem.getPrefix();
+					}
+					processGroups(player, gMem, antiperms, antiperms);
+					for (String temp : gMem.getChildren()) {
+						GroupMemory cMem = plugin.sGroups.get(temp);
+						if (cMem.getServers().contains(serverName)) {
+							processGroups(player, cMem, antiperms, antiperms);
+						}
+					}
+				}
+			}
+			
+			if (prefixs != null) {
+				jObj.addProperty("groups", prefixs);
+			}
+		}
+		
+    	jObj.add("perms", addperms);
+    	jObj.add("antiperms", antiperms);
+    	
+    	sendPerms("perms",server,jObj);
 	}
 }

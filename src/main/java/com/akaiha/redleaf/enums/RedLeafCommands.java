@@ -4,5 +4,6 @@ public enum RedLeafCommands
 {
 	GROUP,
 	PROMOTE,
-	DEMOTE
+	DEMOTE,
+	RELOAD
 }
