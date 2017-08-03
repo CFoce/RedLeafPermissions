@@ -86,8 +86,8 @@ public class RedLeaf extends Plugin
 					bungee.add(perms.get(i).getPerm());
 				} else {
 					String temp = perms.get(i).getPerm();
-					if (temp.contains("-")) {
-						temp = temp.replace("-", "");
+					if (temp.charAt(0) == '-') {
+						temp = temp.substring(1);
 						if (!addperms.contains(temp)) {
 							antiperms.add(temp);
 						}
@@ -146,8 +146,8 @@ public class RedLeaf extends Plugin
 					bungee.add(perms.get(i).getPerm());
 				} else {
 					String temp = perms.get(i).getPerm();
-					if (temp.contains("-")) {
-						temp = temp.replace("-", "");
+					if (temp.charAt(0) == '-') {
+						temp = temp.substring(1);
 						if (!addperms.contains(temp)) {
 							antiperms.add(temp);
 						}

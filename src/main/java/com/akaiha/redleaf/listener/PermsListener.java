@@ -52,7 +52,6 @@ public class PermsListener implements Listener {
 	    			synchronized (playerLocks.get(uuid)) {
 	    				playerLocks.get(uuid).notify();
 	    			}
-	    			playerLocks.remove(uuid);
 	    			if (groups.get(0).getName() != player.getName()) {
 	    				plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
 	    		            @Override
@@ -127,36 +126,33 @@ public class PermsListener implements Listener {
         }
         processBungeePerms(player, dMem.getBungee());
 		
-		if(playerLocks.containsKey(uuid)) {
+		if(playerLocks.containsKey(uuid) || playerGroups.containsKey(uuid)) {
 			while (playerLocks.containsKey(uuid)) {
 				try {
 					synchronized (playerLocks.get(uuid)) {
 						playerLocks.get(uuid).wait();
 					}
+					playerLocks.remove(uuid);
 				} catch (InterruptedException e) {}
 			}
-			String prefixs = null;
+			String prefixs = "";
 			for (String group : playerGroups.get(uuid)) {
 				GroupMemory gMem = plugin.sGroups.get(group);
 				if (gMem.getServers().contains(serverName)) {
 					if (gMem.getPrefix() != null) {
-						if (prefixs == null) {
-							prefixs = gMem.getPrefix();
-						} else {
-							prefixs += gMem.getPrefix();
-						}
+						prefixs += gMem.getPrefix();
 					}
-					processGroups(player, gMem, antiperms, antiperms);
+					processGroups(player, gMem, addperms, antiperms);
 					for (String temp : gMem.getChildren()) {
 						GroupMemory cMem = plugin.sGroups.get(temp);
 						if (cMem.getServers().contains(serverName)) {
-							processGroups(player, cMem, antiperms, antiperms);
+							processGroups(player, cMem, addperms, antiperms);
 						}
 					}
 				}
 			}
 			
-			if (prefixs != null) {
+			if (prefixs != "") {
 				jObj.addProperty("groups", prefixs);
 			}
 		}
