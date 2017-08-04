@@ -1,6 +1,6 @@
-name: RedLeafPermissions
+name: Perms
 main: com.akaiha.redleaf.RedLeaf
-version: 0.5
+version: 0.9.1
 author: Akaiha, greaperc4
 
 commands:

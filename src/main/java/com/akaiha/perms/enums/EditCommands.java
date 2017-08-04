@@ -1,0 +1,14 @@
+package com.akaiha.perms.enums;
+
+public enum EditCommands {
+	CREATE,
+	DELETE,
+	ADDPLAYER,
+	ADDSERVER,
+	ADDPERM,
+	ADDCHILD,
+	REMOVEPLAYER,
+	REMOVESERVER,
+	REMOVEPERM,
+	REMOVECHILD
+}

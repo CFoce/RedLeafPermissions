@@ -10,8 +10,16 @@ repositories {
     maven {
     	url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    flatDir {
+       dirs 'libs'
+   }
 }
 
 dependencies {
+	compile name: 'Core'
     compile (group: 'net.md-5', name: 'bungeecord-api', version: bungeeVersion)
+}
+
+jar {
+    baseName 'Perms'
 }
