@@ -44,3 +44,19 @@ KEY ( name_player ),
 KEY ( uuid ),
 FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
 );
+
+CREATE TABLE IF NOT EXISTS rank(
+rank CHAR(64) NOT NULL,
+PRIMARY KEY ( rank )
+);
+
+CREATE TABLE IF NOT EXISTS ranking(
+id INT NOT NULL AUTO_INCREMENT,
+rank CHAR(64) NOT NULL,
+name_group CHAR(64) NOT NULL,
+state BOOLEAN DEFAULT FALSE,
+PRIMARY KEY ( id ),
+FOREIGN KEY (rank) REFERENCES rank(rank),
+KEY ( state ),
+FOREIGN KEY (name_group) REFERENCES perm_group(name_group)
+);

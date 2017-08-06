@@ -5,21 +5,25 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
+import com.akaiha.core.util.UtilEnum;
 import com.akaiha.perms.Perms;
 import com.akaiha.perms.commands.edit.AddChildCommand;
 import com.akaiha.perms.commands.edit.AddPermCommand;
 import com.akaiha.perms.commands.edit.AddPlayerCommand;
+import com.akaiha.perms.commands.edit.AddPrefixCommand;
 import com.akaiha.perms.commands.edit.AddServerCommand;
 import com.akaiha.perms.commands.edit.CreateGroupCommand;
 import com.akaiha.perms.commands.edit.DeleteGroupCommand;
+import com.akaiha.perms.commands.edit.HelpGroupCommand;
+import com.akaiha.perms.commands.edit.RankCommand;
 import com.akaiha.perms.commands.edit.RemoveChildCommand;
 import com.akaiha.perms.commands.edit.RemovePermCommand;
 import com.akaiha.perms.commands.edit.RemovePlayerCommand;
+import com.akaiha.perms.commands.edit.RemovePrefixCommand;
 import com.akaiha.perms.commands.edit.RemoveServerCommand;
 import com.akaiha.perms.enums.EditCommands;
 
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class EditCommand implements BasicCommand {
 	
@@ -33,6 +37,10 @@ public class EditCommand implements BasicCommand {
 	}
 
 	public void loadCommands() {
+		commands.put(EditCommands.ADDPREFIX, new AddPrefixCommand(plugin));
+		commands.put(EditCommands.RANK, new RankCommand(plugin));
+		commands.put(EditCommands.REMOVEPREFIX, new RemovePrefixCommand(plugin));
+		commands.put(EditCommands.HELP, new HelpGroupCommand(plugin));
 		commands.put(EditCommands.CREATE, new CreateGroupCommand(plugin));
 		commands.put(EditCommands.DELETE, new DeleteGroupCommand(plugin));
 		commands.put(EditCommands.ADDPLAYER, new AddPlayerCommand(plugin));
@@ -47,21 +55,19 @@ public class EditCommand implements BasicCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, String[] args) {
-		if ((args.length > 0 && args[0].equalsIgnoreCase("help"))) {
-			if (sender.hasPermission(getPermission())) 
-				sender.sendMessage(new TextComponent("help command"));
-			return true;
+		if (args.length == 0) {
+			commands.get(EditCommands.HELP).onCommand(sender, args);
+			return false;
 		}
-
-		if (args.length > 0) {
+			
+		if (args.length > 0 && UtilEnum.isInEnum(args[0].toUpperCase(), EditCommands.class)) {
 			EditCommands subArg = EditCommands.valueOf(args[0].toUpperCase());
-
 			if (commands.containsKey(subArg)) {
 				List<String> subArgs = new ArrayList<String>(Arrays.asList(args));
 				subArgs.remove(0);
 				args = subArgs.toArray(new String[0]);
 				commands.get(subArg).onCommand(sender, args);
-				return true;
+				return false;
 			}
 		}
 		return false;
@@ -69,6 +75,6 @@ public class EditCommand implements BasicCommand {
 
 	@Override
 	public String getPermission() {
-		return "perms.edit.help";
+		return "";
 	}
 }

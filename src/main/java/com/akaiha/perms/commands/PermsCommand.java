@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
+import com.akaiha.core.util.UtilEnum;
 import com.akaiha.perms.Perms;
 import com.akaiha.perms.enums.PermsCommands;
 
@@ -24,6 +25,8 @@ public class PermsCommand extends Command {
 	}
 
 	private void loadCommands() {
+		commands.put(PermsCommands.HELP, new HelpCommand(plugin));
+		commands.put(PermsCommands.REMOVE, new RemoveCommand(plugin));
 		commands.put(PermsCommands.EDIT, new EditCommand(plugin));
 		commands.put(PermsCommands.RELOAD, new ReloadCommand(plugin));
 		commands.put(PermsCommands.PROMOTE, new PromoteCommand(plugin));
@@ -33,12 +36,12 @@ public class PermsCommand extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help"))) {
-			// TODO: EXECUTE REDLEAF HELP HERE
+		if (args.length == 0) {
+			commands.get(PermsCommands.HELP).onCommand(sender, args);
 			return;
 		}
-
-		if (args.length > 0) {
+			
+		if (args.length > 0 && UtilEnum.isInEnum(args[0].toUpperCase(), PermsCommands.class)) {
 			PermsCommands subArg = PermsCommands.valueOf(args[0].toUpperCase());
 			if (commands.containsKey(subArg)) {
 				List<String> subArgs = new ArrayList<String>(Arrays.asList(args));
@@ -47,11 +50,6 @@ public class PermsCommand extends Command {
 				commands.get(subArg).onCommand(sender, args);
 				return;
 			}
-			// TODO: SEND 'UNKNOWN COMMAND' MESSAGE
 		}
-	}
-	
-	public String getPermission() {
-		return "perms.help";
 	}
 }

@@ -6,5 +6,6 @@ public enum ListCommands {
 	CHILDREN,
 	SERVERS,
 	PERMS,
-	PLAYER
+	PLAYER,
+	HELP
 }

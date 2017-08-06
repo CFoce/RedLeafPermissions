@@ -1,6 +1,7 @@
 package com.akaiha.perms.enums;
 
 public enum EditCommands {
+	HELP,
 	CREATE,
 	DELETE,
 	ADDPLAYER,
@@ -10,5 +11,8 @@ public enum EditCommands {
 	REMOVEPLAYER,
 	REMOVESERVER,
 	REMOVEPERM,
-	REMOVECHILD
+	REMOVECHILD,
+	RANK,
+	ADDPREFIX,
+	REMOVEPREFIX
 }
