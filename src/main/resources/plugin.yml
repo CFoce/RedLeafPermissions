@@ -1,6 +1,6 @@
 name: Perms
 main: com.akaiha.perms.Perms
-version: 0.9.2
+version: 0.9.4
 depend: [Core]
 author: Akaiha, greaperc4
 

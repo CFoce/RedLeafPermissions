@@ -40,6 +40,6 @@ public class AddPrefixCommand implements BasicCommand {
 
 	@Override
 	public String getPermission() {
-		return "perms.edit.addperm";
+		return "perms.edit.addprefix";
 	}
 }

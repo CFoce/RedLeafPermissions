@@ -35,9 +35,41 @@ public class HelpGroupCommand implements BasicCommand {
 	}
 	
 	private void printHelp(CommandSender sender) {
-		if(sender.hasPermission("perms.edit.help")) {
-			sender.sendMessage(new TextComponent("/perm edit help"));
+		if(sender.hasPermission("perms.edit.create")) {
+			sender.sendMessage(new TextComponent("/perm edit create <group>"));
 		}
-		
+		if(sender.hasPermission("perms.edit.delete")) {
+			sender.sendMessage(new TextComponent("/perm edit delete <group>"));
+		}
+		if(sender.hasPermission("perms.edit.addchild")) {
+			sender.sendMessage(new TextComponent("/perm edit addchild <group> <child>"));
+		}
+		if(sender.hasPermission("perms.edit.addperm")) {
+			sender.sendMessage(new TextComponent("/perm edit addperm <group> <perm> [bungee]"));
+		}
+		if(sender.hasPermission("perms.edit.addplayer")) {
+			sender.sendMessage(new TextComponent("/perm edit addplayer <group> <player>"));
+		}
+		if(sender.hasPermission("perms.edit.addprefix")) {
+			sender.sendMessage(new TextComponent("/perm edit addprefix <group> <pefix>"));
+		}
+		if(sender.hasPermission("perms.edit.addserver")) {
+			sender.sendMessage(new TextComponent("/perm edit addserver <group> <server>"));
+		}
+		if(sender.hasPermission("perms.edit.removechild")) {
+			sender.sendMessage(new TextComponent("/perm edit removechild <group> <child>"));
+		}
+		if(sender.hasPermission("perms.edit.removeperm")) {
+			sender.sendMessage(new TextComponent("/perm edit removeperm <group> <perm> [bungee]"));
+		}
+		if(sender.hasPermission("perms.edit.removeplayer")) {
+			sender.sendMessage(new TextComponent("/perm edit removeplayer <group> <player>"));
+		}
+		if(sender.hasPermission("perms.edit.removeprefix")) {
+			sender.sendMessage(new TextComponent("/perm edit removeprefix <group>"));
+		}
+		if(sender.hasPermission("perms.edit.removeserver")) {
+			sender.sendMessage(new TextComponent("/perm edit removeserver <group> <server>"));
+		}
 	}
 }

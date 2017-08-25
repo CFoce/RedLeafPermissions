@@ -17,6 +17,31 @@ public class PlayerDao {
 		return "PlayerDao ";
 	}
 	
+	public List<Player> getAll(){
+		List<Player> results = new ArrayList<Player>();
+		Player player;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from player");
+			while (rs.next()) {
+				  player = new Player();
+				  player.setGroupName(rs.getString("name_group"));
+				  player.setName(rs.getString("name_player"));
+				  player.setUuid(rs.getString("uuid"));
+				  results.add(player);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error(name() + "getAll");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
+	}
+	
 	public List<Player> getByUUID(String uuid){
 		List<Player> results = new ArrayList<Player>();
 		Player player;

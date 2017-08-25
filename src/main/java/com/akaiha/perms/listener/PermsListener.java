@@ -1,21 +1,17 @@
 package com.akaiha.perms.listener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
+import com.akaiha.core.data.network.Transmit;
 import com.akaiha.perms.Perms;
 import com.akaiha.perms.data.GroupsCache;
+import com.akaiha.perms.data.PlayersCache;
 import com.akaiha.perms.entity.GroupMemory;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -26,19 +22,6 @@ public class PermsListener implements Listener {
 	
 	public PermsListener(Perms plugin) {
 		ul = new UtilListener(plugin);
-	}
-	
-	@EventHandler
-	public void bungeeConnect(PostLoginEvent event) {
-		ul.getGroups(event.getPlayer());
-	}
-	
-	@EventHandler
-	public void bungeeDisConnect(PlayerDisconnectEvent event) {
-		String uuid = event.getPlayer().getUniqueId().toString();
-		if (ul.playerGroups.containsKey(uuid)) {
-			ul.playerGroups.remove(uuid);
-		}
 	}
 	
 	@EventHandler
@@ -62,17 +45,6 @@ public class PermsListener implements Listener {
         processBungeePerms(player, gMem.getBungee());
 	}
 	
-	private void sendPerms(ServerInfo server, JsonObject jObj) {
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(stream);
-        try {
-        	out.writeUTF(new Gson().toJson(jObj));
-    		server.sendData("Return", stream.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-	
 	private void getJObj(final ServerConnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
@@ -93,17 +65,9 @@ public class PermsListener implements Listener {
         }
         processBungeePerms(player, dMem.getBungee());
 		
-		if(ul.playerLocks.containsKey(uuid) || ul.playerGroups.containsKey(uuid)) {
-			while (ul.playerLocks.containsKey(uuid)) {
-				try {
-					synchronized (ul.playerLocks.get(uuid)) {
-						ul.playerLocks.get(uuid).wait();
-					}
-					ul.playerLocks.remove(uuid);
-				} catch (InterruptedException e) {}
-			}
+		if(PlayersCache.playerGroups.containsKey(uuid)) {
 			String prefixs = "";
-			for (String group : ul.playerGroups.get(uuid)) {
+			for (String group : PlayersCache.playerGroups.get(uuid)) {
 				GroupMemory gMem = GroupsCache.sGroups.get(group);
 				if (gMem.getServers().contains(serverName)) {
 					if (gMem.getPrefix() != null) {
@@ -122,12 +86,13 @@ public class PermsListener implements Listener {
 			if (prefixs != "") {
 				jObj.addProperty("groups", prefixs);
 			}
+			ul.nameCheck(uuid,player.getName());
 		}
 		
     	jObj.add("perms", addperms);
     	jObj.add("antiperms", antiperms);
     	jObj.addProperty("channel", "perms");
     	
-    	sendPerms(server,jObj);
+    	Transmit.send(server,jObj);
 	}
 }
