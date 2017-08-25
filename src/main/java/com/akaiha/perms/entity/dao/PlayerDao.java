@@ -42,6 +42,31 @@ public class PlayerDao {
 		return results;
 	}
 	
+	public List<Player> getByName(String name){
+		List<Player> results = new ArrayList<Player>();
+		Player player;
+		try {
+			Statement stm = data.connect().createStatement();
+			ResultSet rs = stm.executeQuery("Select * from player where name_player like '" + name + "'");
+			while (rs.next()) {
+				  player = new Player();
+				  player.setGroupName(rs.getString("name_group"));
+				  player.setName(name);
+				  player.setUuid(rs.getString("uuid"));
+				  results.add(player);
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			data.error(name() + "getByName");
+		} finally {
+			try {
+				data.disconnect();
+			} catch (SQLException e) {
+				data.error();
+			}
+		}
+		return results;
+	}
+	
 	public List<Player> getByGroup(String group){
 		List<Player> results = new ArrayList<Player>();
 		Player player;

@@ -1,13 +1,13 @@
 package com.akaiha.perms.commands.list;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.akaiha.perms.Perms;
 import com.akaiha.perms.commands.BasicCommand;
 import com.akaiha.perms.entity.Child;
 import com.akaiha.perms.entity.dao.ChildDao;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -38,18 +38,12 @@ public class ListChildrenCommand implements BasicCommand {
                 		for(int i = 0; i < list.size(); i++) {
                     		setup += list.get(i).getChildName();
                     		if (i != list.size() - 1) {
-                    			setup += "&a, ";
+                    			setup += "&a,&f ";
                     		}
                     	}
                 	}
-                	String output = setup;
                 	
-	            	plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
-	                    @Override
-	                    public void run() {
-	                    	sender.sendMessage(new TextComponent(output));
-	                    }
-	        		}, 1L, TimeUnit.MILLISECONDS);
+                	sender.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', setup)));
 	            }
 			});
 		} else {

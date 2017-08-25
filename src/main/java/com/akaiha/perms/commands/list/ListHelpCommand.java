@@ -20,14 +20,12 @@ public class ListHelpCommand implements BasicCommand
 		if (!sender.hasPermission(getPermission()))
 			return false;
 
-		if (args.length >= 1) {
-			plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-	            @Override
-	            public void run() {
-	            	
-	            }
-			});
-		}
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            @Override
+            public void run() {
+            	printHelp(sender);
+            }
+		});
 		
 		return true;
 	}
@@ -36,5 +34,26 @@ public class ListHelpCommand implements BasicCommand
 	public String getPermission()
 	{
 		return "perms.list.help";
+	}
+	
+	private void printHelp(CommandSender sender) {
+		if(sender.hasPermission("perms.list.groups")) {
+			sender.sendMessage(new TextComponent("/perm list groups"));
+		}
+		if(sender.hasPermission("perms.list.children")) {
+			sender.sendMessage(new TextComponent("/perm list children <group>"));
+		}
+		if(sender.hasPermission("perms.list.perms")) {
+			sender.sendMessage(new TextComponent("/perm list perms <group>"));
+		}
+		if(sender.hasPermission("perms.list.servers")) {
+			sender.sendMessage(new TextComponent("/perm list servers <group>"));
+		}
+		if(sender.hasPermission("perms.list.players")) {
+			sender.sendMessage(new TextComponent("/perm list players <group>"));
+		}
+		if(sender.hasPermission("perms.list.player")) {
+			sender.sendMessage(new TextComponent("/perm list player <player>"));
+		}
 	}
 }
