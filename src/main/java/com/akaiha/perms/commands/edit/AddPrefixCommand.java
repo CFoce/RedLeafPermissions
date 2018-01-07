@@ -23,15 +23,7 @@ public class AddPrefixCommand implements BasicCommand {
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
             public void run() {
-            	GroupDao dao = new GroupDao();
-        		PermDao pDao = new PermDao();
-        		if (dao.has(args[0]) && !pDao.has(args[0], args[1])) {
-        			if (args.length > 2 && args[2].equalsIgnoreCase("true")) {
-        				pDao.create(args[0], args[1], true);
-        			} else {
-        				pDao.create(args[0], args[1]);
-        			}
-        		}
+            	
             }
 		});
 		
